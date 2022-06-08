@@ -85,6 +85,8 @@ export function handleNewGauge(event: NewGauge): void {
 
   let gaugeNameTried = gaugeContract.try_name();
   gauge.name = gaugeNameTried.reverted ? "" : gaugeNameTried.value;
+  let gaugeSymbolTried = gaugeContract.try_symbol();
+  gauge.symbol = gaugeSymbolTried.reverted ? "" : gaugeSymbolTried.value;
 
   gauge.save();
 

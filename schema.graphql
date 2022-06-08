@@ -16,6 +16,7 @@ type Gauge @entity {
   type: GaugeType!
 
   name: String!
+  symbol: String!
 
   created: BigInt!
   createdAtBlock: BigInt!
