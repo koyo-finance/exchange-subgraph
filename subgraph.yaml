@@ -28,7 +28,6 @@ dataSources:
         - GaugeType
         - GaugeWeight
         - GaugeWeightVote
-        - SystemState
       eventHandlers:
         - event: AddType(string,int128)
           handler: handleAddType
