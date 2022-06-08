@@ -15,6 +15,8 @@ type Gauge @entity {
   address: Bytes!
   type: GaugeType!
 
+  name: String!
+
   created: BigInt!
   createdAtBlock: BigInt!
   createdAtTransaction: Bytes!

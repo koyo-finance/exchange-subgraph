@@ -477,5 +477,17 @@
     "stateMutability": "view",
     "type": "function",
     "gas": 1931
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "name",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ]
   }
 ]

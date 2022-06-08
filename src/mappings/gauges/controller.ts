@@ -1,5 +1,6 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import { decimal, integer } from "@protofire/subgraph-toolkit";
+import { Gauge as GaugeContract } from "../../../generated/GaugeController/Gauge";
 import {
   AddType,
   GaugeController,
@@ -56,6 +57,7 @@ export function handleAddType(event: AddType): void {
 
 export function handleNewGauge(event: NewGauge): void {
   let gaugeController = GaugeController.bind(event.address);
+  let gaugeContract = GaugeContract.bind(event.params.addr);
 
   let nextWeek = nextPeriod(event.block.timestamp, WEEK);
 
@@ -80,6 +82,9 @@ export function handleNewGauge(event: NewGauge): void {
   gauge.created = event.block.timestamp;
   gauge.createdAtBlock = event.block.number;
   gauge.createdAtTransaction = event.transaction.hash;
+
+  let gaugeNameTried = gaugeContract.try_name();
+  gauge.name = gaugeNameTried.reverted ? "" : gaugeNameTried.value;
 
   gauge.save();
 
