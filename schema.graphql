@@ -14,6 +14,7 @@ type Gauge @entity {
   id: ID!
   address: Bytes!
   type: GaugeType!
+  killed: Boolean!
 
   name: String!
   symbol: String!

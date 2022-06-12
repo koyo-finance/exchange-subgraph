@@ -481,24 +481,12 @@
   {
     "stateMutability": "view",
     "type": "function",
-    "name": "name",
+    "name": "is_killed",
     "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "string"
-      }
-    ]
-  },
-  {
-    "stateMutability": "view",
-    "type": "function",
-    "name": "symbol",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
+        "type": "bool"
       }
     ]
   }

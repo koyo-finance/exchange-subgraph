@@ -1,6 +1,6 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import { decimal, integer } from "@protofire/subgraph-toolkit";
-import { Gauge as GaugeContract } from "../../../generated/GaugeController/Gauge";
+import { ERC20 as ERC20Contract } from "../../../generated/GaugeController/ERC20";
 import {
   AddType,
   GaugeController,
@@ -57,7 +57,7 @@ export function handleAddType(event: AddType): void {
 
 export function handleNewGauge(event: NewGauge): void {
   let gaugeController = GaugeController.bind(event.address);
-  let gaugeContract = GaugeContract.bind(event.params.addr);
+  let gaugeERC20Contract = ERC20Contract.bind(event.params.addr);
 
   let nextWeek = nextPeriod(event.block.timestamp, WEEK);
 
@@ -78,14 +78,15 @@ export function handleNewGauge(event: NewGauge): void {
   let gauge = new Gauge(event.params.addr.toHexString());
   gauge.address = event.params.addr;
   gauge.type = gaugeType.id;
+  gauge.killed = false;
 
   gauge.created = event.block.timestamp;
   gauge.createdAtBlock = event.block.number;
   gauge.createdAtTransaction = event.transaction.hash;
 
-  let gaugeNameTried = gaugeContract.try_name();
+  let gaugeNameTried = gaugeERC20Contract.try_name();
   gauge.name = gaugeNameTried.reverted ? "" : gaugeNameTried.value;
-  let gaugeSymbolTried = gaugeContract.try_symbol();
+  let gaugeSymbolTried = gaugeERC20Contract.try_symbol();
   gauge.symbol = gaugeSymbolTried.reverted ? "" : gaugeSymbolTried.value;
 
   gauge.save();

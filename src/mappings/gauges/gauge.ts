@@ -1,5 +1,6 @@
 import { decimal } from "@protofire/subgraph-toolkit";
 import {
+  Gauge,
   GaugeDeposit,
   GaugeLiquidity,
   GaugeWithdraw
@@ -10,23 +11,36 @@ import {
   Withdraw
 } from "../../../generated/templates/Gauge/Gauge";
 import { getOrRegisterAccount } from "../../services/accounts";
+import { Gauge as GaugeContract } from "../../../generated/templates/Gauge/Gauge";
 
 export function handleUpdateLiquidityLimit(event: UpdateLiquidityLimit): void {
   let account = getOrRegisterAccount(event.params.user);
+  let gauge = Gauge.load(event.address.toHexString());
 
-  let gauge = new GaugeLiquidity(
+  let gaugeLiquidity = new GaugeLiquidity(
     account.id + "-" + event.address.toHexString()
   );
-  gauge.user = account.id;
-  gauge.gauge = event.address.toHexString();
-  gauge.originalBalance = event.params.original_balance;
-  gauge.originalSupply = event.params.original_supply;
-  gauge.workingBalance = event.params.working_balance;
-  gauge.workingSupply = event.params.working_supply;
-  gauge.timestamp = event.block.timestamp;
-  gauge.block = event.block.number;
-  gauge.transaction = event.transaction.hash;
-  gauge.save();
+
+  gaugeLiquidity.user = account.id;
+  gaugeLiquidity.gauge = event.address.toHexString();
+  gaugeLiquidity.originalBalance = event.params.original_balance;
+  gaugeLiquidity.originalSupply = event.params.original_supply;
+  gaugeLiquidity.workingBalance = event.params.working_balance;
+  gaugeLiquidity.workingSupply = event.params.working_supply;
+  gaugeLiquidity.timestamp = event.block.timestamp;
+  gaugeLiquidity.block = event.block.number;
+  gaugeLiquidity.transaction = event.transaction.hash;
+
+  gaugeLiquidity.save();
+
+  if (gauge !== null) {
+    let gaugeContract = GaugeContract.bind(event.address);
+
+    let killedTried = gaugeContract.try_is_killed();
+    gauge.killed = killedTried.reverted ? gauge.killed : killedTried.value;
+
+    gauge.save();
+  }
 }
 
 export function handleDeposit(event: Deposit): void {
