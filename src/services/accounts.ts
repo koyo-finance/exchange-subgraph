@@ -1,4 +1,5 @@
 import { Address, Bytes } from "@graphprotocol/graph-ts";
+import { integer } from "@protofire/subgraph-toolkit";
 import { Account, AccountInternalBalance } from "../../generated/schema";
 import { ZERO_BD } from "../constants";
 
@@ -15,7 +16,10 @@ export function getOrRegisterAccount(address: Bytes): Account {
   return account;
 }
 
-export function getOrRegisterAccountInternalBalance(account: string, token: Address): AccountInternalBalance {
+export function getOrRegisterAccountInternalBalance(
+  account: string,
+  token: Address
+): AccountInternalBalance {
   let balanceId = account.concat(token.toHexString());
   let accountInternalBalance = AccountInternalBalance.load(balanceId);
 
@@ -24,11 +28,12 @@ export function getOrRegisterAccountInternalBalance(account: string, token: Addr
 
     accountInternalBalance.account = account;
     accountInternalBalance.token = token;
+
     accountInternalBalance.balance = ZERO_BD;
+    accountInternalBalance.balanceRaw = integer.ZERO;
 
     accountInternalBalance.save();
   }
 
   return accountInternalBalance;
 }
-
