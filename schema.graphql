@@ -3,11 +3,20 @@ type Account @entity {
 
   address: Bytes!
 
+  internalBalances: [AccountInternalBalance!] @derivedFrom(field: "account")
+
   " Liquidity gauges this account contributed to "
   gauges: [GaugeLiquidity!] @derivedFrom(field: "user")
-
   "  "
   gaugeWeightVotes: [GaugeWeightVote!] @derivedFrom(field: "user")
+}
+
+type AccountInternalBalance @entity {
+  id: ID!
+  account: Account
+  token: Bytes!
+  balance: BigDecimal!
+  balanceRaw: BigInt!
 }
 
 type Gauge @entity {

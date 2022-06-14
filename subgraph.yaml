@@ -4,6 +4,29 @@ repository: https://github.com/koyo-finance/exchange-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
+  - name: Vault
+    kind: ethereum/contract
+    network: boba
+    source:
+      address: "0x2A4409Cc7d2AE7ca1E3D915337D1B6Ba2350D6a3"
+      abi: Vault
+      startBlock: 668337
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/vault/core.ts
+      entities:
+        - Account
+        - AccountInternalBalance
+      abis:
+        - name: Vault
+          file: ./abis/Vault.abi
+        - name: ERC20
+          file: ./abis/ERC20.abi
+      eventHandlers:
+        - event: InternalBalanceChanged(indexed address,indexed address,int256)
+          handler: handleInternalBalanceChange
   - name: GaugeController
     kind: ethereum/contract
     network: boba
