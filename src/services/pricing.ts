@@ -5,7 +5,7 @@ import {
   PoolHistoricalLiquidity,
   TokenPrice
 } from "../../generated/schema";
-import { ONE_BD, ZERO_BD } from "../constants";
+import { ZERO_BD } from "../constants";
 import {
   getLatestPriceId,
   getPoolHistoricalLiquidityId,
@@ -19,29 +19,29 @@ export function updatePoolLiquidity(
   block: BigInt,
   pricingAsset: Address
 ): boolean {
-  let pool = Pool.load(poolId);
+  const pool = Pool.load(poolId);
   if (pool == null) return false;
 
-  let tokensList: Bytes[] = pool.tokensList;
+  const tokensList: Bytes[] = pool.tokensList;
   if (tokensList.length < 2) return false;
 
   let poolValue: BigDecimal = ZERO_BD;
 
   for (let j: i32 = 0; j < tokensList.length; j++) {
-    let tokenAddress: Address = Address.fromString(tokensList[j].toHexString());
+    const tokenAddress: Address = Address.fromString(tokensList[j].toHexString());
 
-    let poolToken = getPoolToken(poolId, tokenAddress);
+    const poolToken = getPoolToken(poolId, tokenAddress);
     if (poolToken == null) continue;
 
     if (tokenAddress == pricingAsset) {
       poolValue = poolValue.plus(poolToken.balance);
       continue;
     }
-    let poolTokenQuantity: BigDecimal = poolToken.balance;
+    const poolTokenQuantity: BigDecimal = poolToken.balance;
 
     let price: BigDecimal = ZERO_BD;
-    let latestPriceId = getLatestPriceId(tokenAddress, pricingAsset);
-    let latestPrice = LatestPrice.load(latestPriceId);
+    const latestPriceId = getLatestPriceId(tokenAddress, pricingAsset);
+    const latestPrice = LatestPrice.load(latestPriceId);
 
     // note that we can only meaningfully report liquidity once assets are traded with
     // the pricing asset
@@ -51,15 +51,15 @@ export function updatePoolLiquidity(
     }
 
     if (price.gt(ZERO_BD)) {
-      let poolTokenValue = price.times(poolTokenQuantity);
+      const poolTokenValue = price.times(poolTokenQuantity);
       poolValue = poolValue.plus(poolTokenValue);
     }
   }
 
-  let oldPoolLiquidity: BigDecimal = pool.totalLiquidity;
-  let newPoolLiquidity: BigDecimal =
+  const oldPoolLiquidity: BigDecimal = pool.totalLiquidity;
+  const newPoolLiquidity: BigDecimal =
     valueInUSD(poolValue, pricingAsset) || ZERO_BD;
-  let liquidityChange: BigDecimal = newPoolLiquidity.minus(oldPoolLiquidity);
+    const liquidityChange: BigDecimal = newPoolLiquidity.minus(oldPoolLiquidity);
 
   // If the pool isn't empty but we have a zero USD value then it's likely that we have a bad pricing asset
   // Don't commit any changes and just report the failure.
@@ -68,8 +68,8 @@ export function updatePoolLiquidity(
   }
 
   // Take snapshot of pool state
-  let phlId = getPoolHistoricalLiquidityId(poolId, pricingAsset, block);
-  let phl = new PoolHistoricalLiquidity(phlId);
+  const phlId = getPoolHistoricalLiquidityId(poolId, pricingAsset, block);
+  const phl = new PoolHistoricalLiquidity(phlId);
 
   phl.poolId = poolId;
   phl.pricingAsset = pricingAsset;
@@ -88,7 +88,7 @@ export function updatePoolLiquidity(
   pool.save();
 
   // Update global stats
-  let vault = findOrRegisterVault();
+  const vault = findOrRegisterVault();
 
   vault.totalLiquidity = vault.totalLiquidity.plus(liquidityChange);
 
@@ -98,10 +98,10 @@ export function updatePoolLiquidity(
 }
 
 export function updateLatestPrice(tokenPrice: TokenPrice): void {
-  let tokenAddress = Address.fromString(tokenPrice.asset.toHexString());
-  let pricingAsset = Address.fromString(tokenPrice.pricingAsset.toHexString());
+  const tokenAddress = Address.fromString(tokenPrice.asset.toHexString());
+  const pricingAsset = Address.fromString(tokenPrice.pricingAsset.toHexString());
 
-  let latestPriceId = getLatestPriceId(tokenAddress, pricingAsset);
+  const latestPriceId = getLatestPriceId(tokenAddress, pricingAsset);
   let latestPrice = LatestPrice.load(latestPriceId);
 
   if (latestPrice == null) {
@@ -116,7 +116,7 @@ export function updateLatestPrice(tokenPrice: TokenPrice): void {
   latestPrice.priceUSD = tokenPrice.priceUSD;
   latestPrice.save();
 
-  let token = getOrRegisterToken(tokenAddress);
+  const token = getOrRegisterToken(tokenAddress);
 
   token.latestPrice = latestPrice.id;
 

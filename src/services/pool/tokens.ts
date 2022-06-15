@@ -6,16 +6,16 @@ import { ONE_BD, SWAP_IN, SWAP_OUT, ZERO, ZERO_BD } from "../../constants";
 import { getPoolTokenId } from "../../helpers/token";
 
 export function getOrRegisterToken(tokenAddress: Address): Token {
-  let tokenId = tokenAddress.toHexString();
+  const tokenId = tokenAddress.toHexString();
   let token = Token.load(tokenId);
 
-  if (token == null) {
+  if (token === null) {
     token = new Token(tokenId);
-    let erc20token = ERC20.bind(tokenAddress);
+    const erc20token = ERC20.bind(tokenAddress);
 
-    let nameTried = erc20token.try_name();
-    let symbolTried = erc20token.try_symbol();
-    let decimalsTried = erc20token.try_decimals();
+    const nameTried = erc20token.try_name();
+    const symbolTried = erc20token.try_symbol();
+    const decimalsTried = erc20token.try_decimals();
 
     token.name = nameTried.reverted ? "" : nameTried.value;
     token.symbol = symbolTried.reverted ? "" : symbolTried.value;
@@ -39,7 +39,7 @@ export function updateTokenBalances(
   notionalBalance: BigDecimal,
   swapDirection: i32
 ): void {
-  let token = getOrRegisterToken(tokenAddress);
+  const token = getOrRegisterToken(tokenAddress);
 
   if (swapDirection == SWAP_IN) {
     token.totalBalanceNotional = token.totalBalanceNotional.plus(
@@ -68,17 +68,17 @@ export function getOrRegisterPoolToken(
   poolId: string,
   tokenAddress: Address
 ): PoolToken {
-  let poolTokenId = getPoolTokenId(poolId, tokenAddress);
+  const poolTokenId = getPoolTokenId(poolId, tokenAddress);
   let poolToken = PoolToken.load(poolTokenId);
 
-  if (poolToken == null) {
+  if (poolToken === null) {
     poolToken = new PoolToken(poolTokenId);
-    let token = ERC20.bind(tokenAddress);
-    let tokenEntity = getOrRegisterToken(tokenAddress);
+    const token = ERC20.bind(tokenAddress);
+    const tokenEntity = getOrRegisterToken(tokenAddress);
 
-    let nameTried = token.try_name();
-    let symbolTried = token.try_symbol();
-    let decimalTried = token.try_decimals();
+    const nameTried = token.try_name();
+    const symbolTried = token.try_symbol();
+    const decimalTried = token.try_decimals();
 
     poolToken.poolId = poolId;
     poolToken.address = tokenAddress.toHexString();

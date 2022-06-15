@@ -6,7 +6,7 @@ export function getGaugeType(id: string): GaugeType | null {
 }
 
 export function registerGaugeType(id: string, name: string): GaugeType {
-  let gaugeType = new GaugeType(id);
+  const gaugeType = new GaugeType(id);
   gaugeType.name = name;
   gaugeType.gaugeCount = integer.ZERO;
 

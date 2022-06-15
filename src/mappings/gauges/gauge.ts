@@ -14,10 +14,10 @@ import { getOrRegisterAccount } from "../../services/accounts";
 import { Gauge as GaugeContract } from "../../../generated/templates/Gauge/Gauge";
 
 export function handleUpdateLiquidityLimit(event: UpdateLiquidityLimit): void {
-  let account = getOrRegisterAccount(event.params.user);
-  let gauge = Gauge.load(event.address.toHexString());
+  const account = getOrRegisterAccount(event.params.user);
+  const gauge = Gauge.load(event.address.toHexString());
 
-  let gaugeLiquidity = new GaugeLiquidity(
+  const gaugeLiquidity = new GaugeLiquidity(
     account.id + "-" + event.address.toHexString()
   );
 
@@ -34,9 +34,9 @@ export function handleUpdateLiquidityLimit(event: UpdateLiquidityLimit): void {
   gaugeLiquidity.save();
 
   if (gauge !== null) {
-    let gaugeContract = GaugeContract.bind(event.address);
+    const gaugeContract = GaugeContract.bind(event.address);
 
-    let killedTried = gaugeContract.try_is_killed();
+    const killedTried = gaugeContract.try_is_killed();
     gauge.killed = killedTried.reverted ? gauge.killed : killedTried.value;
 
     gauge.save();
@@ -44,9 +44,9 @@ export function handleUpdateLiquidityLimit(event: UpdateLiquidityLimit): void {
 }
 
 export function handleDeposit(event: Deposit): void {
-  let provider = getOrRegisterAccount(event.params.provider);
+  const provider = getOrRegisterAccount(event.params.provider);
 
-  let deposit = new GaugeDeposit(
+  const deposit = new GaugeDeposit(
     event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
   );
   deposit.gauge = event.address.toHexString();
@@ -56,9 +56,9 @@ export function handleDeposit(event: Deposit): void {
 }
 
 export function handleWithdraw(event: Withdraw): void {
-  let provider = getOrRegisterAccount(event.params.provider);
+  const provider = getOrRegisterAccount(event.params.provider);
 
-  let withdraw = new GaugeWithdraw(
+  const withdraw = new GaugeWithdraw(
     event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
   );
   withdraw.gauge = event.address.toHexString();

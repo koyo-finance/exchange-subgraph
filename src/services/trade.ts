@@ -7,12 +7,12 @@ export function getOrRegisterTradePair(
   token0Address: Address,
   token1Address: Address
 ): TradePair {
-  let sortedAddresses = new Array<string>(2);
+  const sortedAddresses = new Array<string>(2);
   sortedAddresses[0] = token0Address.toHexString();
   sortedAddresses[1] = token1Address.toHexString();
   sortedAddresses.sort();
 
-  let tradePairId = getTradePairId(sortedAddresses[0], sortedAddresses[1]);
+  const tradePairId = getTradePairId(sortedAddresses[0], sortedAddresses[1]);
   let tradePair = TradePair.load(tradePairId);
 
   if (tradePair == null) {

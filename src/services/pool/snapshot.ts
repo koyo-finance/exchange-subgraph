@@ -6,14 +6,14 @@ export function getOrRegisterTokenSnapshot(
   tokenAddress: Address,
   event: ethereum.Event
 ): TokenSnapshot {
-  let timestamp = event.block.timestamp.toI32();
-  let dayID = timestamp / 86400;
-  let id = tokenAddress.toHexString() + "-" + dayID.toString();
+  const timestamp = event.block.timestamp.toI32();
+  const dayID = timestamp / 86400;
+  const id = tokenAddress.toHexString() + "-" + dayID.toString();
   let dayData = TokenSnapshot.load(id);
 
   if (dayData === null) {
-    let dayStartTimestamp = dayID * 86400;
-    let token = getOrRegisterToken(tokenAddress);
+    const dayStartTimestamp = dayID * 86400;
+    const token = getOrRegisterToken(tokenAddress);
     dayData = new TokenSnapshot(id);
 
     dayData.timestamp = dayStartTimestamp;

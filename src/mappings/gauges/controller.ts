@@ -21,23 +21,23 @@ import { Gauge as GaugeTemplate } from "../../../generated/templates";
 import { GAUGE_TOTAL_WEIGHT_PRECISION } from "../../constants";
 import { getOrRegisterAccount } from "../../services/accounts";
 import { getGaugeType, registerGaugeType } from "../../services/gauge-types";
+import { findOrRegisterVault } from "../../services/vault";
 
-let WEEK = integer.fromNumber(604800);
+const WEEK = integer.fromNumber(604800);
 
 export function handleAddType(event: AddType): void {
-  let gaugeController = GaugeController.bind(event.address);
-
-  let nextWeek = nextPeriod(event.block.timestamp, WEEK);
+  const gaugeController = GaugeController.bind(event.address);
+  const nextWeek = nextPeriod(event.block.timestamp, WEEK);
 
   // Add gauge type
-  let gaugeType = registerGaugeType(
+  const gaugeType = registerGaugeType(
     event.params.type_id.toString(),
     event.params.name
   );
   gaugeType.save();
 
   // Save gauge type weight
-  let typeWeight = new GaugeTypeWeight(nextWeek.toString());
+  const typeWeight = new GaugeTypeWeight(nextWeek.toString());
   typeWeight.type = gaugeType.id;
   typeWeight.time = nextWeek;
   typeWeight.weight = decimal.fromBigInt(
@@ -46,25 +46,27 @@ export function handleAddType(event: AddType): void {
   typeWeight.save();
 
   // Save total weight
-  let totalWeight = new GaugeTotalWeight(nextWeek.toString());
+  const totalWeight = new GaugeTotalWeight(nextWeek.toString());
   totalWeight.time = nextWeek;
   totalWeight.weight = decimal.fromBigInt(
     gaugeController.points_total(nextWeek),
     GAUGE_TOTAL_WEIGHT_PRECISION
   );
   totalWeight.save();
+
+  const vault = findOrRegisterVault();
+  vault.gaugeTypeCount = integer.increment(vault.gaugeTypeCount);
+  vault.save();
 }
 
 export function handleNewGauge(event: NewGauge): void {
-  let gaugeController = GaugeController.bind(event.address);
-  let gaugeERC20Contract = ERC20Contract.bind(event.params.addr);
-
-  let nextWeek = nextPeriod(event.block.timestamp, WEEK);
-
+  const gaugeController = GaugeController.bind(event.address);
+  const gaugeERC20Contract = ERC20Contract.bind(event.params.addr);
+  const nextWeek = nextPeriod(event.block.timestamp, WEEK);
   // Get or register gauge type
   let gaugeType = getGaugeType(event.params.gauge_type.toString());
 
-  if (gaugeType == null) {
+  if (gaugeType === null) {
     gaugeType = registerGaugeType(
       event.params.gauge_type.toString(),
       gaugeController.gauge_type_names(event.params.gauge_type)
@@ -75,7 +77,7 @@ export function handleNewGauge(event: NewGauge): void {
   gaugeType.save();
 
   // Add gauge instance
-  let gauge = new Gauge(event.params.addr.toHexString());
+  const gauge = new Gauge(event.params.addr.toHexString());
   gauge.address = event.params.addr;
   gauge.type = gaugeType.id;
   gauge.killed = false;
@@ -84,28 +86,32 @@ export function handleNewGauge(event: NewGauge): void {
   gauge.createdAtBlock = event.block.number;
   gauge.createdAtTransaction = event.transaction.hash;
 
-  let gaugeNameTried = gaugeERC20Contract.try_name();
+  const gaugeNameTried = gaugeERC20Contract.try_name();
   gauge.name = gaugeNameTried.reverted ? "" : gaugeNameTried.value;
-  let gaugeSymbolTried = gaugeERC20Contract.try_symbol();
+  const gaugeSymbolTried = gaugeERC20Contract.try_symbol();
   gauge.symbol = gaugeSymbolTried.reverted ? "" : gaugeSymbolTried.value;
 
   gauge.save();
 
   // Save gauge weight
-  let gaugeWeight = new GaugeWeight(gauge.id + "-" + nextWeek.toString());
+  const gaugeWeight = new GaugeWeight(gauge.id + "-" + nextWeek.toString());
   gaugeWeight.gauge = gauge.id;
   gaugeWeight.time = nextWeek;
   gaugeWeight.weight = decimal.fromBigInt(event.params.weight);
   gaugeWeight.save();
 
   // Save total weight
-  let totalWeight = new GaugeTotalWeight(nextWeek.toString());
+  const totalWeight = new GaugeTotalWeight(nextWeek.toString());
   totalWeight.time = nextWeek;
   totalWeight.weight = decimal.fromBigInt(
     gaugeController.points_total(nextWeek),
     GAUGE_TOTAL_WEIGHT_PRECISION
   );
   totalWeight.save();
+
+  const vault = findOrRegisterVault();
+  vault.gaugeCount = integer.increment(vault.gaugeCount);
+  vault.save();
 
   // Start indexing gauge events
   GaugeTemplate.create(event.params.addr);
@@ -114,20 +120,19 @@ export function handleNewGauge(event: NewGauge): void {
 export function handleNewGaugeWeight(event: NewGaugeWeight): void {
   let gauge = Gauge.load(event.params.gauge_address.toHexString());
 
-  if (gauge != null) {
-    let gaugeController = GaugeController.bind(event.address);
-
-    let nextWeek = nextPeriod(event.params.time, WEEK);
+  if (gauge !== null) {
+    const gaugeController = GaugeController.bind(event.address);
+    const nextWeek = nextPeriod(event.params.time, WEEK);
 
     // Save gauge weight
-    let gaugeWeight = new GaugeWeight(gauge.id + "-" + nextWeek.toString());
+    const gaugeWeight = new GaugeWeight(gauge.id + "-" + nextWeek.toString());
     gaugeWeight.gauge = gauge.id;
     gaugeWeight.time = nextWeek;
     gaugeWeight.weight = decimal.fromBigInt(event.params.weight);
     gaugeWeight.save();
 
     // Save total weight
-    let totalWeight = new GaugeTotalWeight(nextWeek.toString());
+    const totalWeight = new GaugeTotalWeight(nextWeek.toString());
     totalWeight.time = nextWeek;
     totalWeight.weight = decimal.fromBigInt(
       gaugeController.points_total(nextWeek),
@@ -140,8 +145,8 @@ export function handleNewGaugeWeight(event: NewGaugeWeight): void {
 export function handleNewTypeWeight(event: NewTypeWeight): void {
   let gaugeType = GaugeType.load(event.params.type_id.toString());
 
-  if (gaugeType != null) {
-    let typeWeight = new GaugeTypeWeight(
+  if (gaugeType !== null) {
+    const typeWeight = new GaugeTypeWeight(
       gaugeType.id + "-" + event.params.time.toString()
     );
     typeWeight.type = gaugeType.id;
@@ -149,7 +154,7 @@ export function handleNewTypeWeight(event: NewTypeWeight): void {
     typeWeight.weight = decimal.fromBigInt(event.params.weight);
     typeWeight.save();
 
-    let totalWeight = new GaugeTotalWeight(event.params.time.toString());
+    const totalWeight = new GaugeTotalWeight(event.params.time.toString());
     totalWeight.time = event.params.time;
     totalWeight.weight = decimal.fromBigInt(
       event.params.total_weight,
@@ -162,13 +167,12 @@ export function handleNewTypeWeight(event: NewTypeWeight): void {
 export function handleVoteForGauge(event: VoteForGauge): void {
   let gauge = Gauge.load(event.params.gauge_addr.toHexString());
 
-  if (gauge != null) {
-    let gaugeController = GaugeController.bind(event.address);
-
-    let nextWeek = nextPeriod(event.params.time, WEEK);
+  if (gauge !== null) {
+    const gaugeController = GaugeController.bind(event.address);
+    const nextWeek = nextPeriod(event.params.time, WEEK);
 
     // Save gauge weight
-    let gaugeWeight = new GaugeWeight(gauge.id + "-" + nextWeek.toString());
+    const gaugeWeight = new GaugeWeight(gauge.id + "-" + nextWeek.toString());
     gaugeWeight.gauge = gauge.id;
     gaugeWeight.time = nextWeek;
     gaugeWeight.weight = decimal.fromBigInt(
@@ -177,7 +181,7 @@ export function handleVoteForGauge(event: VoteForGauge): void {
     gaugeWeight.save();
 
     // Save total weight
-    let totalWeight = new GaugeTotalWeight(nextWeek.toString());
+    const totalWeight = new GaugeTotalWeight(nextWeek.toString());
     totalWeight.time = nextWeek;
     totalWeight.weight = decimal.fromBigInt(
       gaugeController.points_total(nextWeek),
@@ -186,9 +190,9 @@ export function handleVoteForGauge(event: VoteForGauge): void {
     totalWeight.save();
 
     // Save user's gauge weight vote
-    let user = getOrRegisterAccount(event.params.user);
+    const user = getOrRegisterAccount(event.params.user);
 
-    let vote = new GaugeWeightVote(
+    const vote = new GaugeWeightVote(
       gauge.id + "-" + user.id + "-" + event.params.time.toString()
     );
     vote.gauge = gauge.id;
@@ -200,6 +204,6 @@ export function handleVoteForGauge(event: VoteForGauge): void {
 }
 
 function nextPeriod(timestamp: BigInt, period: BigInt): BigInt {
-  let nextPeriod = timestamp.plus(period);
+  const nextPeriod = timestamp.plus(period);
   return nextPeriod.div(period).times(period);
 }

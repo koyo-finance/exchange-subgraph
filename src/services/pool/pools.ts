@@ -18,8 +18,9 @@ export function getOrRegisterPool(poolId: string): Pool {
 
   if (pool == null) {
     pool = new Pool(poolId);
+    const vault = findOrRegisterVault();
 
-    pool.vaultID = "2";
+    pool.vault = vault.id;
     pool.strategyType = i32(parseInt(poolId.slice(42, 46)));
     pool.tokensList = [];
     pool.totalWeight = ZERO_BD;
@@ -40,7 +41,7 @@ export function handleNewPool(
   poolId: Bytes,
   swapFee: BigInt
 ): Pool {
-  let poolAddress: Address = event.params.pool;
+  const poolAddress: Address = event.params.pool;
   let pool = Pool.load(poolId.toHexString());
 
   if (pool === null) {
@@ -52,20 +53,17 @@ export function handleNewPool(
     pool.tx = event.transaction.hash;
     pool.swapEnabled = true;
 
-    let bpt = ERC20.bind(poolAddress);
+    const bpt = ERC20.bind(poolAddress);
 
-    let nameCall = bpt.try_name();
-    if (!nameCall.reverted) {
-      pool.name = nameCall.value;
-    }
+    const nameTried = bpt.try_name();
+    const symbolTried = bpt.try_symbol();
 
-    let symbolCall = bpt.try_symbol();
-    if (!symbolCall.reverted) {
-      pool.symbol = symbolCall.value;
-    }
+    pool.name = nameTried.reverted ? null : nameTried.value;
+    pool.symbol = symbolTried.reverted ? null : symbolTried.value;
+
     pool.save();
 
-    let vault = findOrRegisterVault();
+    const vault = findOrRegisterVault();
     vault.poolCount += 1;
     vault.save();
   }
@@ -74,25 +72,25 @@ export function handleNewPool(
 }
 
 export function updatePoolWeights(poolId: string): void {
-  let pool = Pool.load(poolId);
+  const pool = Pool.load(poolId);
   if (pool === null) return;
 
-  let poolContract = OracleWeightedPool.bind(changetype<Address>(pool.address));
+  const poolContract = OracleWeightedPool.bind(changetype<Address>(pool.address));
 
-  let tokensList = pool.tokensList;
-  let weightsTried = poolContract.try_getNormalizedWeights();
+  const tokensList = pool.tokensList;
+  const weightsTried = poolContract.try_getNormalizedWeights();
   if (!weightsTried.reverted) {
-    let weights = weightsTried.value;
+    const weights = weightsTried.value;
 
-    if (weights.length == tokensList.length) {
+    if (weights.length === tokensList.length) {
       let totalWeight = ZERO_BD;
 
       for (let i = 0; i < tokensList.length; i++) {
-        let tokenAddress = changetype<Address>(tokensList[i]);
-        let weight = weights[i];
+        const tokenAddress = changetype<Address>(tokensList[i]);
+        const weight = weights[i];
 
-        let poolToken = getOrRegisterPoolToken(poolId, tokenAddress);
-        if (poolToken != null) {
+        const poolToken = getOrRegisterPoolToken(poolId, tokenAddress);
+        if (poolToken !== null) {
           poolToken.weight = scaleDown(weight, 18);
           poolToken.save();
         }

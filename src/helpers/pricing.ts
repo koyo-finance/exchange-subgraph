@@ -15,7 +15,7 @@ export function valueInETH(
 ): BigDecimal {
   let ethValue = ZERO_BD;
 
-  let pricingAssetInETH = LatestPrice.load(
+  const pricingAssetInETH = LatestPrice.load(
     getLatestPriceId(pricingAsset, WETH)
   );
 
@@ -37,10 +37,11 @@ export function valueInUSD(
   } else {
     // convert to USD
     for (let i: i32 = 0; i < USD_STABLE_ASSETS.length; i++) {
-      let pricingAssetInUSD = LatestPrice.load(
+      const pricingAssetInUSD = LatestPrice.load(
         getLatestPriceId(pricingAsset, USD_STABLE_ASSETS[i])
       );
-      if (pricingAssetInUSD != null) {
+
+      if (pricingAssetInUSD !== null) {
         usdValue = value.times(pricingAssetInUSD.price);
         break;
       }
@@ -74,9 +75,9 @@ export function swapValueInUSD(
   } else if (isUSDStable(tokenInAddress)) {
     swapValueUSD = valueInUSD(tokenAmountIn, tokenInAddress);
   } else {
-    let tokenInSwapValueUSD = valueInUSD(tokenAmountIn, tokenInAddress);
-    let tokenOutSwapValueUSD = valueInUSD(tokenAmountOut, tokenOutAddress);
-    let divisor =
+    const tokenInSwapValueUSD = valueInUSD(tokenAmountIn, tokenInAddress);
+    const tokenOutSwapValueUSD = valueInUSD(tokenAmountOut, tokenOutAddress);
+    const divisor =
       tokenInSwapValueUSD.gt(ZERO_BD) && tokenOutSwapValueUSD.gt(ZERO_BD)
         ? BigDecimal.fromString("2")
         : ONE_BD;

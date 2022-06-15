@@ -20,7 +20,7 @@ export function getOrRegisterAccountInternalBalance(
   account: string,
   token: Address
 ): AccountInternalBalance {
-  let balanceId = account.concat(token.toHexString());
+  const balanceId = account.concat(token.toHexString());
   let accountInternalBalance = AccountInternalBalance.load(balanceId);
 
   if (accountInternalBalance == null) {

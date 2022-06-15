@@ -1,13 +1,22 @@
 type Koyo @entity {
   id: ID!
+
+  " Number of pools registered "
   poolCount: Int!
-  pools: [Pool!] @derivedFrom(field: "vaultID")
+  " List of registered pools "
+  pools: [Pool!] @derivedFrom(field: "vault")
+
+  " Number of gauges registered "
+  gaugeCount: BigInt!
+  " Number of gauge types registered "
+  gaugeTypeCount: BigInt!
 
   totalLiquidity: BigDecimal!
   totalSwapCount: BigInt!
   totalSwapVolume: BigDecimal!
   totalSwapFee: BigDecimal!
 
+  " Address of the Kōyō vault "
   address: Bytes!
 }
 
@@ -129,7 +138,7 @@ type Pool @entity {
   swapsCount: BigInt!
   holdersCount: BigInt!
 
-  vaultID: Koyo!
+  vault: Koyo!
   tx: Bytes
 
   tokensList: [Bytes!]!

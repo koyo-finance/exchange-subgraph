@@ -1,4 +1,4 @@
-import { Address } from "@graphprotocol/graph-ts";
+import { integer } from "@protofire/subgraph-toolkit";
 import { Koyo } from "../../generated/schema";
 import { VAULT_ADDRESS, ZERO, ZERO_BD } from "../constants";
 
@@ -9,6 +9,10 @@ export function findOrRegisterVault(): Koyo {
     vault = new Koyo("1");
 
     vault.poolCount = 0;
+
+    vault.gaugeCount = integer.ZERO;
+    vault.gaugeTypeCount = integer.ZERO;
+
     vault.totalLiquidity = ZERO_BD;
     vault.totalSwapVolume = ZERO_BD;
     vault.totalSwapFee = ZERO_BD;
