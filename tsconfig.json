@@ -1,8 +1,4 @@
 {
   "extends": "./node_modules/assemblyscript/std/assembly.json",
-  "compilerOptions": {
-    "lib": ["DOM","ES2017"],
-    "types": ["@graphprotocol/graph-ts", "node"],
-  },
   "include": ["./src/**/*.ts"]
 }

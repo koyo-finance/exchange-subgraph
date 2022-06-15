@@ -7,6 +7,14 @@
         "Vault": {
             "address": "0x2A4409Cc7d2AE7ca1E3D915337D1B6Ba2350D6a3",
             "startBlock": 668337
+        },
+        "WeightedPoolFactory": {
+            "address": "0xEa34bb7F24F3BB120DAF64Cd1BC9e958FFF9ED0c",
+            "startBlock": 673848
+        },
+        "OracleWeightedPoolFactory": {
+            "address": "0x06f607EC266BB98bcb9Bae402D61Ab5E008ab018",
+            "startBlock": 673576
         }
     }
 }
