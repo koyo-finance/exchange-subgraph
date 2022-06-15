@@ -1,8 +1,9 @@
-import { Address } from "@graphprotocol/graph-ts";
+import { Address, BigDecimal } from "@graphprotocol/graph-ts";
 import { integer } from "@protofire/subgraph-toolkit";
 import { PoolToken, Token } from "../../../generated/schema";
 import { ERC20 } from "../../../generated/Vault/ERC20";
-import { ONE_BD, ZERO, ZERO_BD } from "../../constants";
+import { ONE_BD, SWAP_IN, SWAP_OUT, ZERO, ZERO_BD } from "../../constants";
+import { getPoolTokenId } from "../../helpers/token";
 
 export function getOrRegisterToken(tokenAddress: Address): Token {
   let tokenId = tokenAddress.toHexString();
@@ -32,8 +33,28 @@ export function getOrRegisterToken(tokenAddress: Address): Token {
   return token;
 }
 
-export function getPoolTokenId(poolId: string, tokenAddress: Address): string {
-  return poolId.concat("-").concat(tokenAddress.toHexString());
+export function updateTokenBalances(
+  tokenAddress: Address,
+  usdBalance: BigDecimal,
+  notionalBalance: BigDecimal,
+  swapDirection: i32
+): void {
+  let token = getOrRegisterToken(tokenAddress);
+
+  if (swapDirection == SWAP_IN) {
+    token.totalBalanceNotional = token.totalBalanceNotional.plus(
+      notionalBalance
+    );
+    token.totalBalanceUSD = token.totalBalanceUSD.plus(usdBalance);
+  } else if (swapDirection == SWAP_OUT) {
+    token.totalBalanceNotional = token.totalBalanceNotional.minus(
+      notionalBalance
+    );
+    token.totalBalanceUSD = token.totalBalanceUSD.minus(usdBalance);
+  }
+
+  token.totalVolumeUSD = token.totalVolumeUSD.plus(usdBalance);
+  token.save();
 }
 
 export function getPoolToken(

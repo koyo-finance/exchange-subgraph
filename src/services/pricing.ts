@@ -2,7 +2,8 @@ import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import {
   LatestPrice,
   Pool,
-  PoolHistoricalLiquidity
+  PoolHistoricalLiquidity,
+  TokenPrice
 } from "../../generated/schema";
 import { ONE_BD, ZERO_BD } from "../constants";
 import {
@@ -10,7 +11,7 @@ import {
   getPoolHistoricalLiquidityId,
   valueInUSD
 } from "../helpers/pricing";
-import { getPoolToken } from "./pool/tokens";
+import { getOrRegisterToken, getPoolToken } from "./pool/tokens";
 import { findOrRegisterVault } from "./vault";
 
 export function updatePoolLiquidity(
@@ -94,4 +95,29 @@ export function updatePoolLiquidity(
   vault.save();
 
   return true;
+}
+
+export function updateLatestPrice(tokenPrice: TokenPrice): void {
+  let tokenAddress = Address.fromString(tokenPrice.asset.toHexString());
+  let pricingAsset = Address.fromString(tokenPrice.pricingAsset.toHexString());
+
+  let latestPriceId = getLatestPriceId(tokenAddress, pricingAsset);
+  let latestPrice = LatestPrice.load(latestPriceId);
+
+  if (latestPrice == null) {
+    latestPrice = new LatestPrice(latestPriceId);
+    latestPrice.asset = tokenPrice.asset;
+    latestPrice.pricingAsset = tokenPrice.pricingAsset;
+  }
+
+  latestPrice.block = tokenPrice.block;
+  latestPrice.poolId = tokenPrice.poolId;
+  latestPrice.price = tokenPrice.price;
+  latestPrice.save();
+
+  let token = getOrRegisterToken(tokenAddress);
+
+  token.latestPrice = latestPrice.id;
+
+  token.save();
 }

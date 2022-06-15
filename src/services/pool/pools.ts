@@ -9,6 +9,10 @@ import { scaleDown } from "../../helpers/scaling";
 import { findOrRegisterVault } from "../vault";
 import { getOrRegisterPoolToken } from "./tokens";
 
+export function getPool(poolId: string): Pool | null {
+  return Pool.load(poolId);
+}
+
 export function getOrRegisterPool(poolId: string): Pool {
   let pool = Pool.load(poolId);
 

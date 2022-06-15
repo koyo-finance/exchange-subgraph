@@ -4,6 +4,7 @@ import {
   BigInt,
   dataSource
 } from "@graphprotocol/graph-ts";
+import { ZERO_ADDRESS } from "@protofire/subgraph-toolkit";
 
 export class AddressByNetwork {
   public boba_mainnet: string;
@@ -14,13 +15,19 @@ let network: string = dataSource.network();
 
 // Number of decimals used for gauge weight
 export const GAUGE_WEIGHT_PRECISION = 18;
-
 // Number of decimals used for total weight
 export const GAUGE_TOTAL_WEIGHT_PRECISION = GAUGE_WEIGHT_PRECISION * 2;
 
-export let ZERO = BigInt.fromI32(0);
-export let ZERO_BD = BigDecimal.fromString("0");
-export let ONE_BD = BigDecimal.fromString("1");
+export const MIN_POOL_LIQUIDITY = BigDecimal.fromString("10");
+
+export const ZERO = BigInt.fromI32(0);
+export const ZERO_BD = BigDecimal.fromString("0");
+export const ONE_BD = BigDecimal.fromString("1");
+
+export const SWAP_IN = 0;
+export const SWAP_OUT = 1;
+
+export const ZERO_ADDRESS_ADDRESS: Address = changetype<Address>(Address.fromHexString(ZERO_ADDRESS));
 
 function forNetwork(
   addressByNetwork: AddressByNetwork,
@@ -82,12 +89,5 @@ export let DAI: Address = forNetwork(daiAddressByNetwork, network);
 export let USDC: Address = forNetwork(usdcAddressByNetwork, network);
 export let USDT: Address = forNetwork(usdtAddressByNetwork, network);
 
-export let PRICING_ASSETS: Address[] = [
-  WETH,
-  USDC,
-  FRAX,
-  DAI,
-  USDT,
-  KYO
-];
-export let USD_STABLE_ASSETS: Address[] = [FRAX, USDC, DAI, USDT];
+export let PRICING_ASSETS: Address[] = [WETH, USDC, FRAX, DAI, KYO];
+export let USD_STABLE_ASSETS: Address[] = [FRAX, USDC, DAI];

@@ -1,6 +1,13 @@
 import { Address, BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 import { LatestPrice } from "../../generated/schema";
-import { PRICING_ASSETS, USD_STABLE_ASSETS, WETH, ZERO_BD } from "../constants";
+import {
+  ONE_BD,
+  PRICING_ASSETS,
+  USD_STABLE_ASSETS,
+  WETH,
+  ZERO_ADDRESS_ADDRESS,
+  ZERO_BD
+} from "../constants";
 
 export function valueInETH(
   value: BigDecimal,
@@ -12,7 +19,7 @@ export function valueInETH(
     getLatestPriceId(pricingAsset, WETH)
   );
 
-  if (pricingAssetInETH != null) {
+  if (pricingAssetInETH !== null) {
     ethValue = value.times(pricingAssetInETH.price);
   }
 
@@ -54,6 +61,31 @@ export function valueInUSD(
   return usdValue;
 }
 
+export function swapValueInUSD(
+  tokenInAddress: Address,
+  tokenAmountIn: BigDecimal,
+  tokenOutAddress: Address,
+  tokenAmountOut: BigDecimal
+): BigDecimal {
+  let swapValueUSD = ZERO_BD;
+
+  if (isUSDStable(tokenOutAddress)) {
+    swapValueUSD = valueInUSD(tokenAmountOut, tokenOutAddress);
+  } else if (isUSDStable(tokenInAddress)) {
+    swapValueUSD = valueInUSD(tokenAmountIn, tokenInAddress);
+  } else {
+    let tokenInSwapValueUSD = valueInUSD(tokenAmountIn, tokenInAddress);
+    let tokenOutSwapValueUSD = valueInUSD(tokenAmountOut, tokenOutAddress);
+    let divisor =
+      tokenInSwapValueUSD.gt(ZERO_BD) && tokenOutSwapValueUSD.gt(ZERO_BD)
+        ? BigDecimal.fromString("2")
+        : ONE_BD;
+    swapValueUSD = tokenInSwapValueUSD.plus(tokenOutSwapValueUSD).div(divisor);
+  }
+
+  return swapValueUSD;
+}
+
 export function isUSDStable(asset: Address): boolean {
   for (let i: i32 = 0; i < USD_STABLE_ASSETS.length; i++) {
     if (USD_STABLE_ASSETS[i] == asset) return true;
@@ -78,7 +110,38 @@ export function getLatestPriceId(
     .concat(pricingAsset.toHexString());
 }
 
-export function getPoolHistoricalLiquidityId(poolId: string, tokenAddress: Address, block: BigInt): string {
-  return poolId.concat('-').concat(tokenAddress.toHexString()).concat('-').concat(block.toString());
+export function getPoolHistoricalLiquidityId(
+  poolId: string,
+  tokenAddress: Address,
+  block: BigInt
+): string {
+  return poolId
+    .concat("-")
+    .concat(tokenAddress.toHexString())
+    .concat("-")
+    .concat(block.toString());
 }
 
+export function getTokenPriceId(
+  poolId: string,
+  tokenAddress: Address,
+  stableTokenAddress: Address,
+  block: BigInt
+): string {
+  return poolId
+    .concat("-")
+    .concat(tokenAddress.toHexString())
+    .concat("-")
+    .concat(stableTokenAddress.toHexString())
+    .concat("-")
+    .concat(block.toString());
+}
+
+export function getPreferentialPricingAsset(assets: Address[]): Address {
+  // Assumes PRICING_ASSETS are sorted by order of preference
+  for (let i: i32 = 0; i < PRICING_ASSETS.length; i++) {
+    if (assets.includes(PRICING_ASSETS[i])) return PRICING_ASSETS[i];
+  }
+
+  return ZERO_ADDRESS_ADDRESS;
+}

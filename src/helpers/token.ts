@@ -15,3 +15,7 @@ export function tokenToDecimal(amount: BigInt, decimals: i32): BigDecimal {
 
   return amount.toBigDecimal().div(scale);
 }
+
+export function getPoolTokenId(poolId: string, tokenAddress: Address): string {
+  return poolId.concat("-").concat(tokenAddress.toHexString());
+}

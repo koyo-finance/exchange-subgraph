@@ -46,6 +46,15 @@ type Token @entity {
   latestPrice: LatestPrice # latest price of token, updated when pool liquidity changes
 }
 
+type TradePair @entity {
+  " Token Address - Token Address "
+  id: ID!
+  token0: Token!
+  token1: Token!
+  totalSwapVolume: BigDecimal!
+  totalSwapFee: BigDecimal!
+}
+
 type LatestPrice @entity {
   id: ID!
   asset: Bytes!
@@ -53,6 +62,18 @@ type LatestPrice @entity {
   poolId: Pool! # last pool which set price
   price: BigDecimal! # all the latest prices
   block: BigInt! # last block that prices were updated
+}
+
+type TokenPrice @entity {
+  id: ID! # address of token + address of stablecoin-poolId
+  poolId: Pool!
+  asset: Bytes!
+  amount: BigDecimal!
+  " Address of stable asset "
+  pricingAsset: Bytes!
+  price: BigDecimal!
+  block: BigInt!
+  timestamp: Int!
 }
 
 enum InvestType {
