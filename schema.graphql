@@ -55,6 +55,22 @@ type LatestPrice @entity {
   block: BigInt! # last block that prices were updated
 }
 
+enum InvestType {
+  Join
+  Exit
+}
+
+type JoinExit @entity {
+  id: ID!
+  type: InvestType!
+  sender: Bytes!
+  amounts: [BigDecimal!]!
+  pool: Pool!
+  account: Account!
+  timestamp: Int!
+  tx: Bytes!
+}
+
 type Pool @entity {
   id: ID!
   address: Bytes!

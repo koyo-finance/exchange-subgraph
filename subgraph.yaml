@@ -25,6 +25,9 @@ dataSources:
         - name: ERC20
           file: ./abis/ERC20.abi
       eventHandlers:
+        - event: PoolBalanceChanged(indexed bytes32,indexed
+            address,address[],int256[],uint256[])
+          handler: handleBalanceChange
         - event: InternalBalanceChanged(indexed address,indexed address,int256)
           handler: handleInternalBalanceChange
   - name: GaugeController

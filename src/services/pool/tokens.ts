@@ -36,6 +36,13 @@ export function getPoolTokenId(poolId: string, tokenAddress: Address): string {
   return poolId.concat("-").concat(tokenAddress.toHexString());
 }
 
+export function getPoolToken(
+  poolId: string,
+  tokenAddress: Address
+): PoolToken | null {
+  return PoolToken.load(getPoolTokenId(poolId, tokenAddress));
+}
+
 export function getOrRegisterPoolToken(
   poolId: string,
   tokenAddress: Address
@@ -55,8 +62,8 @@ export function getOrRegisterPoolToken(
     poolToken.poolId = poolId;
     poolToken.address = tokenAddress.toHexString();
 
-    poolToken.name = nameTried.reverted ? '' : nameTried.value;
-    poolToken.symbol = symbolTried.reverted ? '' : symbolTried.value;
+    poolToken.name = nameTried.reverted ? "" : nameTried.value;
+    poolToken.symbol = symbolTried.reverted ? "" : symbolTried.value;
     poolToken.decimals = decimalTried.reverted ? 18 : decimalTried.value;
 
     poolToken.balance = ZERO_BD;
