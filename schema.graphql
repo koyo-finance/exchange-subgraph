@@ -46,6 +46,17 @@ type Token @entity {
   latestPrice: LatestPrice # latest price of token, updated when pool liquidity changes
 }
 
+type TokenSnapshot @entity {
+  id: ID! # token address + dayId
+  token: Token!
+  timestamp: Int! # timestamp representing the start of day in UTC
+  totalBalanceUSD: BigDecimal! # total balance of tokens across balancer
+  totalBalanceNotional: BigDecimal! # underlying asset balance
+  totalVolumeUSD: BigDecimal! # amount of volume the token has moved on this day
+  totalVolumeNotional: BigDecimal! # underyling asset volume
+  totalSwapCount: BigInt!
+}
+
 type TradePair @entity {
   " Token Address - Token Address "
   id: ID!

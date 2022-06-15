@@ -27,6 +27,7 @@ import {
   getOrRegisterAccountInternalBalance
 } from "../../services/accounts";
 import { getPool, updatePoolWeights } from "../../services/pool/pools";
+import { getOrRegisterTokenSnapshot } from "../../services/pool/snapshot";
 import {
   getOrRegisterPoolToken,
   getOrRegisterToken,
@@ -342,6 +343,13 @@ function handlePoolJoined(event: PoolBalanceChanged): void {
 
     token.save();
 
+    let tokenSnapshot = getOrRegisterTokenSnapshot(tokenAddress, event);
+
+    tokenSnapshot.totalBalanceNotional = token.totalBalanceNotional;
+    tokenSnapshot.totalBalanceUSD = token.totalBalanceUSD;
+
+    tokenSnapshot.save();
+
     poolToken.balance = newAmount;
     poolToken.save();
   }
@@ -430,11 +438,20 @@ function handlePoolExited(event: PoolBalanceChanged): void {
     poolToken.save();
 
     let token = getOrRegisterToken(tokenAddress);
+
     token.totalBalanceNotional = token.totalBalanceNotional.minus(
       tokenAmountOut
     );
     token.totalBalanceUSD = token.totalBalanceUSD.minus(tokenAmountOutUSD);
+
     token.save();
+
+    let tokenSnapshot = getOrRegisterTokenSnapshot(tokenAddress, event);
+
+    tokenSnapshot.totalBalanceNotional = token.totalBalanceNotional;
+    tokenSnapshot.totalBalanceUSD = token.totalBalanceUSD;
+
+    tokenSnapshot.save();
   }
 
   for (let i: i32 = 0; i < tokenAddresses.length; i++) {

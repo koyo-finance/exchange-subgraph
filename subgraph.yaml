@@ -19,6 +19,7 @@ dataSources:
       entities:
         - Account
         - AccountInternalBalance
+        - TokenSnapshot
       abis:
         - name: Vault
           file: ./abis/Vault.abi
