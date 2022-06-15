@@ -24,6 +24,10 @@ dataSources:
           file: ./abis/Vault.abi
         - name: ERC20
           file: ./abis/ERC20.abi
+        - name: OracleWeightedPoolFactory
+          file: ./abis/OracleWeightedPoolFactory.abi
+        - name: OracleWeightedPool
+          file: ./abis/OracleWeightedPool.abi
       eventHandlers:
         - event: Swap(indexed bytes32,indexed address,indexed address,uint256,uint256)
           handler: handleSwapEvent
