@@ -2,6 +2,7 @@ import { Address, Bytes } from "@graphprotocol/graph-ts";
 import { OracleWeightedPool } from "../../../../generated/OracleWeightedPoolFactory/OracleWeightedPool";
 import { PoolCreated } from "../../../../generated/OracleWeightedPoolFactory/OracleWeightedPoolFactory";
 import { Vault } from "../../../../generated/OracleWeightedPoolFactory/Vault";
+import { OracleWeightedPool as OracleWeightedPoolTemplate } from "../../../../generated/templates";
 import { PoolType } from "../../../helpers/pool";
 import { getOrRegisterAccount } from "../../../services/accounts";
 import { handleNewPool, updatePoolWeights } from "../../../services/pool/pools";
@@ -26,7 +27,9 @@ function createOracleWeightedPool(
   pool.factory = event.address;
   pool.owner = account.id;
 
-  let vaultContract = Vault.bind(Address.fromBytes(findOrRegisterVault().address));
+  let vaultContract = Vault.bind(
+    Address.fromBytes(findOrRegisterVault().address)
+  );
   let tokensTried = vaultContract.try_getPoolTokens(poolId);
 
   if (!tokensTried.reverted) {
@@ -47,4 +50,5 @@ function createOracleWeightedPool(
 
 export function handleNewOracleWeightedPool(event: PoolCreated): void {
   createOracleWeightedPool(event, PoolType.Weighted);
+  OracleWeightedPoolTemplate.create(event.params.pool);
 }

@@ -29,6 +29,8 @@ export const SWAP_OUT = 1;
 
 export const ZERO_ADDRESS_ADDRESS: Address = changetype<Address>(Address.fromHexString(ZERO_ADDRESS));
 
+export const BPT_DECIMALS = 18;
+
 function forNetwork(
   addressByNetwork: AddressByNetwork,
   network: string

@@ -1,12 +1,15 @@
 import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { integer } from "@protofire/subgraph-toolkit";
-import { OracleWeightedPool } from "../../../generated/OracleWeightedPoolFactory/OracleWeightedPool";
+import { OracleWeightedPool as OracleWeightedPoolContract } from "../../../generated/OracleWeightedPoolFactory/OracleWeightedPool";
 import { PoolCreated } from "../../../generated/OracleWeightedPoolFactory/OracleWeightedPoolFactory";
 import { Pool } from "../../../generated/schema";
+import { WeightedPool as WeightedPoolContract } from "../../../generated/templates/OracleWeightedPool/WeightedPool";
 import { ERC20 } from "../../../generated/Vault/ERC20";
-import { ZERO_BD } from "../../constants";
+import { BPT_DECIMALS, ZERO_ADDRESS_ADDRESS, ZERO_BD } from "../../constants";
 import { scaleDown } from "../../helpers/scaling";
+import { tokenToDecimal } from "../../helpers/token";
 import { findOrRegisterVault } from "../vault";
+import { getOrRegisterPoolShare } from "./shares";
 import { getOrRegisterPoolToken } from "./tokens";
 
 export function getPool(poolId: string): Pool | null {
@@ -75,7 +78,9 @@ export function updatePoolWeights(poolId: string): void {
   const pool = Pool.load(poolId);
   if (pool === null) return;
 
-  const poolContract = OracleWeightedPool.bind(changetype<Address>(pool.address));
+  const poolContract = OracleWeightedPoolContract.bind(
+    changetype<Address>(pool.address)
+  );
 
   const tokensList = pool.tokensList;
   const weightsTried = poolContract.try_getNormalizedWeights();
@@ -100,6 +105,77 @@ export function updatePoolWeights(poolId: string): void {
 
       pool.totalWeight = totalWeight;
     }
+  }
+
+  pool.save();
+}
+
+export function generalisedHandleBPTTransfer(
+  poolAddress: Address,
+  from: Address,
+  to: Address,
+  value: BigInt
+): void {
+  const poolContract = WeightedPoolContract.bind(poolAddress);
+
+  const poolIdTried = poolContract.try_getPoolId();
+  const poolId = poolIdTried.value;
+
+  const isMint = from === ZERO_ADDRESS_ADDRESS;
+  const isBurn = to === ZERO_ADDRESS_ADDRESS;
+
+  const poolShareFrom = getOrRegisterPoolShare(poolId.toHexString(), from);
+  const poolShareFromBalance =
+    poolShareFrom == null ? ZERO_BD : poolShareFrom.balance;
+
+  const poolShareTo = getOrRegisterPoolShare(poolId.toHexString(), to);
+  const poolShareToBalance =
+    poolShareTo == null ? ZERO_BD : poolShareTo.balance;
+
+  const pool = Pool.load(poolId.toHexString()) as Pool;
+
+  if (isMint) {
+    poolShareTo.balance = poolShareTo.balance.plus(
+      tokenToDecimal(value, BPT_DECIMALS)
+    );
+    poolShareTo.save();
+    pool.totalShares = pool.totalShares.plus(
+      tokenToDecimal(value, BPT_DECIMALS)
+    );
+  } else if (isBurn) {
+    poolShareFrom.balance = poolShareFrom.balance.minus(
+      tokenToDecimal(value, BPT_DECIMALS)
+    );
+    poolShareFrom.save();
+    pool.totalShares = pool.totalShares.minus(
+      tokenToDecimal(value, BPT_DECIMALS)
+    );
+  } else {
+    poolShareTo.balance = poolShareTo.balance.plus(
+      tokenToDecimal(value, BPT_DECIMALS)
+    );
+    poolShareTo.save();
+
+    poolShareFrom.balance = poolShareFrom.balance.minus(
+      tokenToDecimal(value, BPT_DECIMALS)
+    );
+    poolShareFrom.save();
+  }
+
+  if (
+    poolShareTo !== null &&
+    poolShareTo.balance.notEqual(ZERO_BD) &&
+    poolShareToBalance.equals(ZERO_BD)
+  ) {
+    pool.holdersCount = pool.holdersCount.plus(BigInt.fromI32(1));
+  }
+
+  if (
+    poolShareFrom !== null &&
+    poolShareFrom.balance.equals(ZERO_BD) &&
+    poolShareFromBalance.notEqual(ZERO_BD)
+  ) {
+    pool.holdersCount = pool.holdersCount.minus(BigInt.fromI32(1));
   }
 
   pool.save();
