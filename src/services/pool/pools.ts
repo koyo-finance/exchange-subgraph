@@ -4,8 +4,14 @@ import { OracleWeightedPool as OracleWeightedPoolContract } from "../../../gener
 import { PoolCreated } from "../../../generated/OracleWeightedPoolFactory/OracleWeightedPoolFactory";
 import { Pool } from "../../../generated/schema";
 import { WeightedPool as WeightedPoolContract } from "../../../generated/templates/OracleWeightedPool/WeightedPool";
+import { StablePool as StablePoolContract } from "../../../generated/templates/StablePool/StablePool";
 import { ERC20 } from "../../../generated/Vault/ERC20";
-import { BPT_DECIMALS, ZERO_ADDRESS_ADDRESS, ZERO_BD } from "../../constants";
+import {
+  BPT_DECIMALS,
+  ZERO,
+  ZERO_ADDRESS_ADDRESS,
+  ZERO_BD
+} from "../../constants";
 import { scaleDown } from "../../helpers/scaling";
 import { tokenToDecimal } from "../../helpers/token";
 import { findOrRegisterVault } from "../vault";
@@ -121,8 +127,8 @@ export function generalisedHandleBPTTransfer(
   const poolIdTried = poolContract.try_getPoolId();
   const poolId = poolIdTried.value;
 
-  const isMint = from === ZERO_ADDRESS_ADDRESS;
-  const isBurn = to === ZERO_ADDRESS_ADDRESS;
+  const isMint = from.equals(ZERO_ADDRESS_ADDRESS);
+  const isBurn = to.equals(ZERO_ADDRESS_ADDRESS);
 
   const poolShareFrom = getOrRegisterPoolShare(poolId.toHexString(), from);
   const poolShareFromBalance =
@@ -177,6 +183,27 @@ export function generalisedHandleBPTTransfer(
   ) {
     pool.holdersCount = pool.holdersCount.minus(BigInt.fromI32(1));
   }
+
+  pool.save();
+}
+
+export function getAmp(poolContract: StablePoolContract): BigInt {
+  const ampTried = poolContract.try_getAmplificationParameter();
+  let amp = ZERO;
+
+  if (!ampTried.reverted) {
+    const value = ampTried.value.value0;
+    const precision = ampTried.value.value2;
+    amp = value.div(precision);
+  }
+
+  return amp;
+}
+
+export function updateAmpFactor(pool: Pool): void {
+  let poolContract = StablePoolContract.bind(changetype<Address>(pool.address));
+
+  pool.amp = getAmp(poolContract);
 
   pool.save();
 }

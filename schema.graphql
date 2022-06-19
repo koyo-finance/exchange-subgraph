@@ -143,6 +143,9 @@ type Pool @entity {
 
   tokensList: [Bytes!]!
 
+  # StablePool Only
+  amp: BigInt
+
   tokens: [PoolToken!] @derivedFrom(field: "poolId")
   swaps: [Swap!] @derivedFrom(field: "poolId")
   shares: [PoolShare!] @derivedFrom(field: "poolId")
@@ -181,6 +184,16 @@ type PoolShare @entity {
   account: Account!
   poolId: Pool!
   balance: BigDecimal!
+}
+
+type AmpUpdate @entity {
+  id: ID!
+  poolId: Pool!
+  scheduledTimestamp: Int!
+  startTimestamp: BigInt!
+  endTimestamp: BigInt!
+  startAmp: BigInt!
+  endAmp: BigInt!
 }
 
 type Swap @entity {
