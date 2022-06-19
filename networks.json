@@ -15,6 +15,10 @@
         "OracleWeightedPoolFactory": {
             "address": "0x06f607EC266BB98bcb9Bae402D61Ab5E008ab018",
             "startBlock": 673576
+        },
+        "StablePoolFactory": {
+            "address": "0xb4455B572b4dBF39d76a10de530988803C13d854",
+            "startBlock": 684091
         }
     }
 }

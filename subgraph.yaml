@@ -102,6 +102,35 @@ dataSources:
       eventHandlers:
         - event: PoolCreated(indexed address)
           handler: handleNewOracleWeightedPool
+  - name: StablePoolFactory
+    kind: ethereum/contract
+    network: boba
+    source:
+      address: "0xb4455B572b4dBF39d76a10de530988803C13d854"
+      abi: StablePoolFactory
+      startBlock: 684091
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/vault/pools/stableFactory.ts
+      entities:
+        - Balancer
+        - Pool
+      abis:
+        - name: Vault
+          file: ./abis/Vault.abi
+        - name: ERC20
+          file: ./abis/ERC20.abi
+        - name: StablePoolFactory
+          file: ./abis/StablePoolFactory.abi
+        - name: StablePool
+          file: ./abis/StablePool.abi
+        - name: WeightedPool
+          file: ./abis/WeightedPool.abi
+      eventHandlers:
+        - event: PoolCreated(indexed address)
+          handler: handleNewStablePool
 templates:
   - name: Gauge
     kind: ethereum/contract
