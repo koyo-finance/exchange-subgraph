@@ -13,6 +13,8 @@ export class AddressByNetwork {
 
 const network: string = dataSource.network();
 
+export const DAY = 24 * 60 * 60;
+
 // Number of decimals used for gauge weight
 export const GAUGE_WEIGHT_PRECISION = 18;
 // Number of decimals used for total weight
@@ -27,7 +29,9 @@ export const ONE_BD = BigDecimal.fromString("1");
 export const SWAP_IN = 0;
 export const SWAP_OUT = 1;
 
-export const ZERO_ADDRESS_ADDRESS: Address = changetype<Address>(Address.fromHexString(ZERO_ADDRESS));
+export const ZERO_ADDRESS_ADDRESS: Address = changetype<Address>(
+  Address.fromHexString(ZERO_ADDRESS)
+);
 
 export const BPT_DECIMALS = 18;
 

@@ -276,7 +276,12 @@ export function handleSwapEvent(event: SwapEvent): void {
     tokenOutAddress
   ]);
   if (preferentialToken != ZERO_ADDRESS_ADDRESS) {
-    updatePoolLiquidity(poolId.toHex(), block, preferentialToken);
+    updatePoolLiquidity(
+      poolId.toHex(),
+      block,
+      preferentialToken,
+      blockTimestamp
+    );
   }
 }
 
@@ -362,7 +367,8 @@ function handlePoolJoined(event: PoolBalanceChanged): void {
       let success = updatePoolLiquidity(
         poolId,
         event.block.number,
-        tokenAddress
+        tokenAddress,
+        blockTimestamp
       );
       // Some pricing assets may not have a route back to USD yet
       // so we keep trying until we find one
@@ -462,7 +468,8 @@ function handlePoolExited(event: PoolBalanceChanged): void {
       let success = updatePoolLiquidity(
         poolId,
         event.block.number,
-        tokenAddress
+        tokenAddress,
+        blockTimestamp
       );
       // Some pricing assets may not have a route back to USD yet
       // so we keep trying until we find one

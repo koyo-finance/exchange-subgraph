@@ -66,6 +66,22 @@ type TokenSnapshot @entity {
   totalSwapCount: BigInt!
 }
 
+type PoolSnapshot @entity {
+  id: ID!
+  pool: Pool!
+  amounts: [BigDecimal!]!
+  totalShares: BigDecimal!
+  swapVolume: BigDecimal!
+  swapFees: BigDecimal!
+  timestamp: Int!
+
+  totalSwapVolume: BigDecimal!
+  totalSwapFee: BigDecimal!
+  totalLiquidity: BigDecimal!
+  swapsCount: BigInt!
+  holdersCount: BigInt!
+}
+
 type TradePair @entity {
   " Token Address - Token Address "
   id: ID!

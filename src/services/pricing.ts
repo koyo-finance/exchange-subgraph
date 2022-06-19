@@ -11,13 +11,15 @@ import {
   getPoolHistoricalLiquidityId,
   valueInUSD
 } from "../helpers/pricing";
+import { getOrRegisterPoolSnapshot } from "./pool/snapshot";
 import { getOrRegisterToken, getPoolToken } from "./pool/tokens";
 import { findOrRegisterVault } from "./vault";
 
 export function updatePoolLiquidity(
   poolId: string,
   block: BigInt,
-  pricingAsset: Address
+  pricingAsset: Address,
+  timestamp: i32
 ): boolean {
   const pool = Pool.load(poolId);
   if (pool == null) return false;
@@ -28,7 +30,9 @@ export function updatePoolLiquidity(
   let poolValue: BigDecimal = ZERO_BD;
 
   for (let j: i32 = 0; j < tokensList.length; j++) {
-    const tokenAddress: Address = Address.fromString(tokensList[j].toHexString());
+    const tokenAddress: Address = Address.fromString(
+      tokensList[j].toHexString()
+    );
 
     const poolToken = getPoolToken(poolId, tokenAddress);
     if (poolToken == null) continue;
@@ -59,7 +63,7 @@ export function updatePoolLiquidity(
   const oldPoolLiquidity: BigDecimal = pool.totalLiquidity;
   const newPoolLiquidity: BigDecimal =
     valueInUSD(poolValue, pricingAsset) || ZERO_BD;
-    const liquidityChange: BigDecimal = newPoolLiquidity.minus(oldPoolLiquidity);
+  const liquidityChange: BigDecimal = newPoolLiquidity.minus(oldPoolLiquidity);
 
   // If the pool isn't empty but we have a zero USD value then it's likely that we have a bad pricing asset
   // Don't commit any changes and just report the failure.
@@ -87,6 +91,8 @@ export function updatePoolLiquidity(
 
   pool.save();
 
+  getOrRegisterPoolSnapshot(pool, timestamp);
+
   // Update global stats
   const vault = findOrRegisterVault();
 
@@ -99,7 +105,9 @@ export function updatePoolLiquidity(
 
 export function updateLatestPrice(tokenPrice: TokenPrice): void {
   const tokenAddress = Address.fromString(tokenPrice.asset.toHexString());
-  const pricingAsset = Address.fromString(tokenPrice.pricingAsset.toHexString());
+  const pricingAsset = Address.fromString(
+    tokenPrice.pricingAsset.toHexString()
+  );
 
   const latestPriceId = getLatestPriceId(tokenAddress, pricingAsset);
   let latestPrice = LatestPrice.load(latestPriceId);
