@@ -181,7 +181,6 @@ type PoolShare @entity {
   account: Account!
   poolId: Pool!
   balance: BigDecimal!
-  balanceRaw: BigInt!
 }
 
 type Swap @entity {

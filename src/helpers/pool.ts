@@ -2,7 +2,7 @@ import { Address } from "@graphprotocol/graph-ts";
 
 export namespace PoolType {
   export const Weighted = "Weighted";
-  export const Stable = 'Stable';
+  export const Stable = "Stable";
 }
 
 export function getPoolAddress(poolId: string): Address {
