@@ -234,6 +234,8 @@ type Gauge @entity {
   type: GaugeType!
   killed: Boolean!
 
+  pool: Pool
+
   name: String!
   symbol: String!
 

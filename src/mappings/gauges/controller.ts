@@ -1,14 +1,16 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import { decimal, integer } from "@protofire/subgraph-toolkit";
 import { ERC20 as ERC20Contract } from "../../../generated/GaugeController/ERC20";
+import { Gauge as GaugeContract } from "../../../generated/GaugeController/Gauge";
 import {
   AddType,
-  GaugeController,
+  GaugeController as GaugeControllerContract,
   NewGauge,
   NewGaugeWeight,
   NewTypeWeight,
   VoteForGauge
 } from "../../../generated/GaugeController/GaugeController";
+import { WeightedPool as WeightedPoolContract } from "../../../generated/GaugeController/WeightedPool";
 import {
   Gauge,
   GaugeTotalWeight,
@@ -21,12 +23,13 @@ import { Gauge as GaugeTemplate } from "../../../generated/templates";
 import { GAUGE_TOTAL_WEIGHT_PRECISION } from "../../constants";
 import { getOrRegisterAccount } from "../../services/accounts";
 import { getGaugeType, registerGaugeType } from "../../services/gauge-types";
+import { getPool } from "../../services/pool/pools";
 import { findOrRegisterVault } from "../../services/vault";
 
 const WEEK = integer.fromNumber(604800);
 
 export function handleAddType(event: AddType): void {
-  const gaugeController = GaugeController.bind(event.address);
+  const gaugeController = GaugeControllerContract.bind(event.address);
   const nextWeek = nextPeriod(event.block.timestamp, WEEK);
 
   // Add gauge type
@@ -60,7 +63,8 @@ export function handleAddType(event: AddType): void {
 }
 
 export function handleNewGauge(event: NewGauge): void {
-  const gaugeController = GaugeController.bind(event.address);
+  const gaugeController = GaugeControllerContract.bind(event.address);
+  const gauge_ = GaugeContract.bind(event.params.addr);
   const gaugeERC20Contract = ERC20Contract.bind(event.params.addr);
   const nextWeek = nextPeriod(event.block.timestamp, WEEK);
   // Get or register gauge type
@@ -90,6 +94,18 @@ export function handleNewGauge(event: NewGauge): void {
   gauge.name = gaugeNameTried.reverted ? "" : gaugeNameTried.value;
   const gaugeSymbolTried = gaugeERC20Contract.try_symbol();
   gauge.symbol = gaugeSymbolTried.reverted ? "" : gaugeSymbolTried.value;
+
+  const lpTokenTried = GaugeContract.bind(event.params.addr).try_lp_token();
+
+  if (!lpTokenTried.reverted) {
+    const pool_ = WeightedPoolContract.bind(lpTokenTried.value);
+    const poolIdTried = pool_.try_getPoolId();
+
+    if (!poolIdTried.reverted) {
+      const pool = getPool(poolIdTried.value.toHexString());
+      if (pool) gauge.pool = pool.id;
+    }
+  }
 
   gauge.save();
 
@@ -121,7 +137,7 @@ export function handleNewGaugeWeight(event: NewGaugeWeight): void {
   let gauge = Gauge.load(event.params.gauge_address.toHexString());
 
   if (gauge !== null) {
-    const gaugeController = GaugeController.bind(event.address);
+    const gaugeController = GaugeControllerContract.bind(event.address);
     const nextWeek = nextPeriod(event.params.time, WEEK);
 
     // Save gauge weight
@@ -168,7 +184,7 @@ export function handleVoteForGauge(event: VoteForGauge): void {
   let gauge = Gauge.load(event.params.gauge_addr.toHexString());
 
   if (gauge !== null) {
-    const gaugeController = GaugeController.bind(event.address);
+    const gaugeController = GaugeControllerContract.bind(event.address);
     const nextWeek = nextPeriod(event.params.time, WEEK);
 
     // Save gauge weight

@@ -58,6 +58,8 @@ dataSources:
           file: ./abis/Gauge.abi
         - name: ERC20
           file: ./abis/ERC20.abi
+        - name: WeightedPool
+          file: ./abis/WeightedPool.abi
       entities:
         - Gauge
         - GaugeType
