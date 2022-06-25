@@ -3,6 +3,7 @@ import { PoolCreated as OracleWeightedPoolCreated } from "../../../../generated/
 import { Vault } from "../../../../generated/OracleWeightedPoolFactory/Vault";
 import { StablePool as StablePoolContract } from "../../../../generated/StablePoolFactory/StablePool";
 import { PoolCreated } from "../../../../generated/StablePoolFactory/StablePoolFactory";
+import { StablePool as StablePoolTemplate } from "../../../../generated/templates";
 import { PoolType } from "../../../helpers/pool";
 import { getOrRegisterAccount } from "../../../services/accounts";
 import { handleNewPool } from "../../../services/pool/pools";
@@ -54,4 +55,5 @@ function createStablePool(event: PoolCreated, poolType: string): string {
 
 export function handleNewStablePool(event: PoolCreated): void {
   createStablePool(event, PoolType.Stable);
+  StablePoolTemplate.create(event.params.pool);
 }
