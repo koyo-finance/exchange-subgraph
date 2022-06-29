@@ -89,6 +89,7 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/mappings/vault/pools/oracleWeightedFactory.ts
       entities:
+        - Koyo
         - Pool
       abis:
         - name: Vault
@@ -104,6 +105,35 @@ dataSources:
       eventHandlers:
         - event: PoolCreated(indexed address)
           handler: handleNewOracleWeightedPool
+  - name: WeightedPoolFactory
+    kind: ethereum/contract
+    network: boba
+    source:
+      address: "0xEa34bb7F24F3BB120DAF64Cd1BC9e958FFF9ED0c"
+      abi: WeightedPoolFactory
+      startBlock: 673848
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/vault/pools/weightedFactory.ts
+      entities:
+        - Koyo
+        - Pool
+      abis:
+        - name: Vault
+          file: ./abis/Vault.abi
+        - name: ERC20
+          file: ./abis/ERC20.abi
+        - name: WeightedPoolFactory
+          file: ./abis/WeightedPoolFactory.abi
+        - name: WeightedPool
+          file: ./abis/WeightedPool.abi
+        - name: OracleWeightedPool
+          file: ./abis/OracleWeightedPool.abi
+      eventHandlers:
+        - event: PoolCreated(indexed address)
+          handler: handleNewWeightedPool
   - name: StablePoolFactory
     kind: ethereum/contract
     network: boba
@@ -173,6 +203,31 @@ templates:
       abis:
         - name: OracleWeightedPool
           file: ./abis/OracleWeightedPool.abi
+        - name: WeightedPool
+          file: ./abis/WeightedPool.abi
+        - name: BalancerPoolToken
+          file: ./abis/BalancerPoolToken.abi
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: SwapFeePercentageChanged(uint256)
+          handler: handleSwapFeePercentageChange
+  - name: WeightedPool
+    kind: ethereum/contract
+    network: boba
+    source:
+      abi: WeightedPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/vault/pools/weightedPool.ts
+      entities:
+        - Pool
+        - PoolShare
+        - Swap
+        - PoolToken
+      abis:
         - name: WeightedPool
           file: ./abis/WeightedPool.abi
         - name: BalancerPoolToken

@@ -1,9 +1,9 @@
 import { Pool } from "../../../../generated/schema";
 import {
-  OracleWeightedPool as OracleWeightedPoolContract,
   SwapFeePercentageChanged,
-  Transfer
-} from "../../../../generated/templates/OracleWeightedPool/OracleWeightedPool";
+  Transfer,
+  WeightedPool as WeightedPoolContract
+} from "../../../../generated/templates/WeightedPool/WeightedPool";
 import { scaleDown } from "../../../helpers/scaling";
 import { generalisedHandleBPTTransfer } from "../../../services/pool/pools";
 
@@ -11,7 +11,7 @@ export function handleSwapFeePercentageChange(
   event: SwapFeePercentageChanged
 ): void {
   const poolAddress = event.address;
-  const poolContract = OracleWeightedPoolContract.bind(poolAddress);
+  const poolContract = WeightedPoolContract.bind(poolAddress);
 
   const poolIdTried = poolContract.try_getPoolId();
   const poolId = poolIdTried.value;

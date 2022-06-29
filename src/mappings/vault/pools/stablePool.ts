@@ -1,13 +1,16 @@
-import { Pool, AmpUpdate } from "../../../../generated/schema";
+import { AmpUpdate, Pool } from "../../../../generated/schema";
 import {
   AmpUpdateStarted,
   AmpUpdateStopped,
+  StablePool as StablePoolContract,
   SwapFeePercentageChanged,
   Transfer
 } from "../../../../generated/templates/StablePool/StablePool";
-import { StablePool as StablePoolContract } from "../../../../generated/templates/StablePool/StablePool";
 import { scaleDown } from "../../../helpers/scaling";
-import { generalisedHandleBPTTransfer, updateAmpFactor } from "../../../services/pool/pools";
+import {
+  generalisedHandleBPTTransfer,
+  updateAmpFactor
+} from "../../../services/pool/pools";
 
 export function handleSwapFeePercentageChange(
   event: SwapFeePercentageChanged
