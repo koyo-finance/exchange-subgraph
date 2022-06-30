@@ -226,6 +226,7 @@ type Swap @entity {
   account: Account!
   timestamp: Int!
   tx: Bytes!
+  valueUSD: BigDecimal!
 }
 
 type Gauge @entity {
