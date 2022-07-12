@@ -7,8 +7,10 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "build:boba": "graph build --network boba",
+    "build:aurora": "graph build --network aurora",
     "create:local": "graph create --node http://localhost:8020/ koyo-finance/exchange-subgraph",
     "deploy:boba:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-boba",
+    "deploy:aurora:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-aurora",
     "deploy:local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 koyo-finance/exchange-subgraph",
     "remove:local": "graph remove --node http://localhost:8020/ koyo-finance/exchange-subgraph"
   },

@@ -6,11 +6,11 @@ schema:
 dataSources:
   - name: Vault
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
-      address: "0x2A4409Cc7d2AE7ca1E3D915337D1B6Ba2350D6a3"
       abi: Vault
-      startBlock: 668337
+      address: "0x0613ADbD846CB73E65aA474b785F52697af04c0b"
+      startBlock: 69667674
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -41,11 +41,11 @@ dataSources:
           handler: handleInternalBalanceChange
   - name: GaugeController
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
       abi: GaugeController
       address: "0xe8c8dbCcE7450B1100A5e416525B2F6C5F7eaDba"
-      startBlock: 653581
+      startBlock: 69667674
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -78,11 +78,11 @@ dataSources:
           handler: handleVoteForGauge
   - name: OracleWeightedPoolFactory
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
-      address: "0x06f607EC266BB98bcb9Bae402D61Ab5E008ab018"
       abi: OracleWeightedPoolFactory
-      startBlock: 673576
+      address: "0x4a427cA68B3633ecb16a20993257255a54a55E00"
+      startBlock: 69680724
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -107,11 +107,11 @@ dataSources:
           handler: handleNewOracleWeightedPool
   - name: WeightedPoolFactory
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
-      address: "0xEa34bb7F24F3BB120DAF64Cd1BC9e958FFF9ED0c"
       abi: WeightedPoolFactory
-      startBlock: 673848
+      address: "0x3A778b6b0524c7378D96F0D54E8fb0631CaDbEa7"
+      startBlock: 69686719
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -136,11 +136,11 @@ dataSources:
           handler: handleNewWeightedPool
   - name: StablePoolFactory
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
-      address: "0xb4455B572b4dBF39d76a10de530988803C13d854"
       abi: StablePoolFactory
-      startBlock: 684091
+      address: "0x84848224aAAEEAF842634CE644D92f0c45e0432D"
+      startBlock: 69680973
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -166,7 +166,7 @@ dataSources:
 templates:
   - name: Gauge
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
       abi: Gauge
     mapping:
@@ -187,7 +187,7 @@ templates:
           handler: handleWithdraw
   - name: OracleWeightedPool
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
       abi: OracleWeightedPool
     mapping:
@@ -214,7 +214,7 @@ templates:
           handler: handleSwapFeePercentageChange
   - name: WeightedPool
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
       abi: WeightedPool
     mapping:
@@ -239,7 +239,7 @@ templates:
           handler: handleSwapFeePercentageChange
   - name: StablePool
     kind: ethereum/contract
-    network: boba
+    network: aurora
     source:
       abi: StablePool
     mapping:

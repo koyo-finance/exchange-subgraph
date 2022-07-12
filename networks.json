@@ -20,5 +20,27 @@
             "address": "0xb4455B572b4dBF39d76a10de530988803C13d854",
             "startBlock": 684091
         }
+    },
+    "aurora": {
+        "GaugeController": {
+            "address": "0xe8c8dbCcE7450B1100A5e416525B2F6C5F7eaDba",
+            "startBlock": 69667674
+        },
+        "Vault": {
+            "address": "0x0613ADbD846CB73E65aA474b785F52697af04c0b",
+            "startBlock": 69667674
+        },
+        "WeightedPoolFactory": {
+            "address": "0x3A778b6b0524c7378D96F0D54E8fb0631CaDbEa7",
+            "startBlock": 69686719
+        },
+        "OracleWeightedPoolFactory": {
+            "address": "0x4a427cA68B3633ecb16a20993257255a54a55E00",
+            "startBlock": 69680724
+        },
+        "StablePoolFactory": {
+            "address": "0x84848224aAAEEAF842634CE644D92f0c45e0432D",
+            "startBlock": 69680973
+        }
     }
 }
