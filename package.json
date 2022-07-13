@@ -1,26 +1,28 @@
 {
-  "name": "@koyofinance/exchange-subgraph",
-  "version": "1.0.0",
-  "license": "MIT",
-  "private": true,
-  "scripts": {
-    "codegen": "graph codegen",
-    "build": "graph build",
-    "build:boba": "graph build --network boba",
-    "build:aurora": "graph build --network aurora",
-    "create:local": "graph create --node http://localhost:8020/ koyo-finance/exchange-subgraph",
-    "deploy:boba:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-boba",
-    "deploy:aurora:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-aurora",
-    "deploy:local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 koyo-finance/exchange-subgraph",
-    "remove:local": "graph remove --node http://localhost:8020/ koyo-finance/exchange-subgraph"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.30.0",
-    "@graphprotocol/graph-ts": "^0.27.0",
-    "@protofire/subgraph-toolkit": "^0.1.2"
-  },
-  "resolutions": {
-    "colors": "1.4.0"
-  }
+    "name": "@koyofinance/exchange-subgraph",
+    "version": "1.0.0",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "codegen": "graph codegen",
+        "build": "graph build",
+        "build:boba": "graph build --network boba",
+        "build:aurora": "graph build --network aurora",
+        "build:moonriver": "graph build --network moonriver",
+        "create:local": "graph create --node http://localhost:8020/ koyo-finance/exchange-subgraph",
+        "deploy:boba:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-boba",
+        "deploy:aurora:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-aurora",
+        "deploy:moonriver:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-moonriver",
+        "deploy:local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 koyo-finance/exchange-subgraph",
+        "remove:local": "graph remove --node http://localhost:8020/ koyo-finance/exchange-subgraph"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@graphprotocol/graph-cli": "^0.30.0",
+        "@graphprotocol/graph-ts": "^0.27.0",
+        "@protofire/subgraph-toolkit": "^0.1.2"
+    },
+    "resolutions": {
+        "colors": "1.4.0"
+    }
 }

@@ -42,5 +42,27 @@
             "address": "0x84848224aAAEEAF842634CE644D92f0c45e0432D",
             "startBlock": 69680973
         }
+    },
+    "moonriver": {
+        "GaugeController": {
+            "address": "0xe8c8dbCcE7450B1100A5e416525B2F6C5F7eaDba",
+            "startBlock": 2194432
+        },
+        "Vault": {
+            "address": "0xEa1E627c12DF4e054D61FD408Ff7186353aC6cA1",
+            "startBlock": 2194432
+        },
+        "WeightedPoolFactory": {
+            "address": "0xA61b41da3aefcA5Af96Ad03518781667Cd4d2a59",
+            "startBlock": 2194643
+        },
+        "OracleWeightedPoolFactory": {
+            "address": "0x7B7eda36C8c8e14b5d7f254A0444080D2FFCC926",
+            "startBlock": 2194452
+        },
+        "StablePoolFactory": {
+            "address": "0xACf8489ccb47DA2D7306d827bbEDe05bFA6fea1b",
+            "startBlock": 2194659
+        }
     }
 }
