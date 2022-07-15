@@ -64,5 +64,27 @@
             "address": "0xACf8489ccb47DA2D7306d827bbEDe05bFA6fea1b",
             "startBlock": 2194659
         }
+    },
+    "matic": {
+        "GaugeController": {
+            "address": "0xe8c8dbCcE7450B1100A5e416525B2F6C5F7eaDba",
+            "startBlock": 30743895
+        },
+        "Vault": {
+            "address": "0xACf8489ccb47DA2D7306d827bbEDe05bFA6fea1b",
+            "startBlock": 30743895
+        },
+        "WeightedPoolFactory": {
+            "address": "0x84848224aAAEEAF842634CE644D92f0c45e0432D",
+            "startBlock": 30744229
+        },
+        "OracleWeightedPoolFactory": {
+            "address": "0x6ceb95626A59a2F8B1d0B6DB970F4190B89354C7",
+            "startBlock": 30744102
+        },
+        "StablePoolFactory": {
+            "address": "0x3A778b6b0524c7378D96F0D54E8fb0631CaDbEa7",
+            "startBlock": 30744548
+        }
     }
 }

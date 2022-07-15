@@ -6,11 +6,11 @@ schema:
 dataSources:
   - name: Vault
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: Vault
-      address: "0xEa1E627c12DF4e054D61FD408Ff7186353aC6cA1"
-      startBlock: 2194432
+      address: "0xACf8489ccb47DA2D7306d827bbEDe05bFA6fea1b"
+      startBlock: 30743895
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -41,11 +41,11 @@ dataSources:
           handler: handleInternalBalanceChange
   - name: GaugeController
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: GaugeController
       address: "0xe8c8dbCcE7450B1100A5e416525B2F6C5F7eaDba"
-      startBlock: 2194432
+      startBlock: 30743895
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -78,11 +78,11 @@ dataSources:
           handler: handleVoteForGauge
   - name: OracleWeightedPoolFactory
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: OracleWeightedPoolFactory
-      address: "0x7B7eda36C8c8e14b5d7f254A0444080D2FFCC926"
-      startBlock: 2194452
+      address: "0x6ceb95626A59a2F8B1d0B6DB970F4190B89354C7"
+      startBlock: 30744102
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -107,11 +107,11 @@ dataSources:
           handler: handleNewOracleWeightedPool
   - name: WeightedPoolFactory
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: WeightedPoolFactory
-      address: "0xA61b41da3aefcA5Af96Ad03518781667Cd4d2a59"
-      startBlock: 2194643
+      address: "0x84848224aAAEEAF842634CE644D92f0c45e0432D"
+      startBlock: 30744229
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -136,11 +136,11 @@ dataSources:
           handler: handleNewWeightedPool
   - name: StablePoolFactory
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: StablePoolFactory
-      address: "0xACf8489ccb47DA2D7306d827bbEDe05bFA6fea1b"
-      startBlock: 2194659
+      address: "0x3A778b6b0524c7378D96F0D54E8fb0631CaDbEa7"
+      startBlock: 30744548
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -166,7 +166,7 @@ dataSources:
 templates:
   - name: Gauge
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: Gauge
     mapping:
@@ -187,7 +187,7 @@ templates:
           handler: handleWithdraw
   - name: OracleWeightedPool
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: OracleWeightedPool
     mapping:
@@ -214,7 +214,7 @@ templates:
           handler: handleSwapFeePercentageChange
   - name: WeightedPool
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: WeightedPool
     mapping:
@@ -239,7 +239,7 @@ templates:
           handler: handleSwapFeePercentageChange
   - name: StablePool
     kind: ethereum/contract
-    network: moonriver
+    network: matic
     source:
       abi: StablePool
     mapping:

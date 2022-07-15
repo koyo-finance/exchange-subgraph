@@ -9,10 +9,12 @@
         "build:boba": "graph build --network boba",
         "build:aurora": "graph build --network aurora",
         "build:moonriver": "graph build --network moonriver",
+        "build:matic": "graph build --network matic",
         "create:local": "graph create --node http://localhost:8020/ koyo-finance/exchange-subgraph",
         "deploy:boba:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-boba",
         "deploy:aurora:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-aurora",
         "deploy:moonriver:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-moonriver",
+        "deploy:matic:mainnet": "graph deploy --product hosted-service koyo-finance/exchange-subgraph-matic",
         "deploy:local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 koyo-finance/exchange-subgraph",
         "remove:local": "graph remove --node http://localhost:8020/ koyo-finance/exchange-subgraph"
     },
