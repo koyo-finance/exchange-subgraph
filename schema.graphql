@@ -1,313 +1,331 @@
 type Koyo @entity {
-  id: ID!
+    id: ID!
 
-  " Number of pools registered "
-  poolCount: Int!
-  " List of registered pools "
-  pools: [Pool!] @derivedFrom(field: "vault")
+    " Number of pools registered "
+    poolCount: Int!
+    " List of registered pools "
+    pools: [Pool!] @derivedFrom(field: "vault")
 
-  " Number of gauges registered "
-  gaugeCount: BigInt!
-  " Number of gauge types registered "
-  gaugeTypeCount: BigInt!
+    " Number of gauges registered "
+    gaugeCount: BigInt!
+    " Number of gauge types registered "
+    gaugeTypeCount: BigInt!
 
-  totalLiquidity: BigDecimal!
-  totalSwapCount: BigInt!
-  totalSwapVolume: BigDecimal!
-  totalSwapFee: BigDecimal!
+    totalLiquidity: BigDecimal!
+    totalSwapCount: BigInt!
+    totalSwapVolume: BigDecimal!
+    totalSwapFee: BigDecimal!
 
-  " Address of the Kōyō vault "
-  address: Bytes!
+    " Address of the Kōyō vault "
+    address: Bytes!
+}
+
+type KoyoSnapshot @entity {
+    id: ID!
+    vault: Koyo!
+    timestamp: Int!
+
+    poolCount: Int!
+
+    gaugeCount: BigInt!
+    gaugeTypeCount: BigInt!
+
+    totalLiquidity: BigDecimal!
+    totalSwapCount: BigInt!
+    totalSwapVolume: BigDecimal!
+    totalSwapFee: BigDecimal!
+
+    address: Bytes!
 }
 
 type Account @entity {
-  id: ID!
+    id: ID!
 
-  address: Bytes!
+    address: Bytes!
 
-  internalBalances: [AccountInternalBalance!] @derivedFrom(field: "account")
+    internalBalances: [AccountInternalBalance!] @derivedFrom(field: "account")
 
-  " Liquidity gauges this account contributed to "
-  gauges: [GaugeLiquidity!] @derivedFrom(field: "user")
-  "  "
-  gaugeWeightVotes: [GaugeWeightVote!] @derivedFrom(field: "user")
+    " Liquidity gauges this account contributed to "
+    gauges: [GaugeLiquidity!] @derivedFrom(field: "user")
+    "  "
+    gaugeWeightVotes: [GaugeWeightVote!] @derivedFrom(field: "user")
 }
 
 type AccountInternalBalance @entity {
-  id: ID!
-  account: Account
-  token: Bytes!
-  balance: BigDecimal!
-  balanceRaw: BigInt!
+    id: ID!
+    account: Account
+    token: Bytes!
+    balance: BigDecimal!
+    balanceRaw: BigInt!
 }
 
 type Token @entity {
-  id: ID!
-  symbol: String
-  name: String
-  decimals: Int!
-  address: String!
-  totalBalanceUSD: BigDecimal! # total balance of tokens across balancer
-  totalBalanceNotional: BigDecimal!
-  totalVolumeUSD: BigDecimal! # total volume in fiat (usd)
-  totalVolumeNotional: BigDecimal!
-  totalSwapCount: BigInt!
-  latestPrice: LatestPrice # latest price of token, updated when pool liquidity changes
+    id: ID!
+    symbol: String
+    name: String
+    decimals: Int!
+    address: String!
+    totalBalanceUSD: BigDecimal! # total balance of tokens across balancer
+    totalBalanceNotional: BigDecimal!
+    totalVolumeUSD: BigDecimal! # total volume in fiat (usd)
+    totalVolumeNotional: BigDecimal!
+    totalSwapCount: BigInt!
+    latestPrice: LatestPrice # latest price of token, updated when pool liquidity changes
 }
 
 type TokenSnapshot @entity {
-  id: ID! # token address + dayId
-  token: Token!
-  timestamp: Int! # timestamp representing the start of day in UTC
-  totalBalanceUSD: BigDecimal! # total balance of tokens across balancer
-  totalBalanceNotional: BigDecimal! # underlying asset balance
-  totalVolumeUSD: BigDecimal! # amount of volume the token has moved on this day
-  totalVolumeNotional: BigDecimal! # underyling asset volume
-  totalSwapCount: BigInt!
+    id: ID! # token address + dayId
+    token: Token!
+    timestamp: Int! # timestamp representing the start of day in UTC
+    totalBalanceUSD: BigDecimal! # total balance of tokens across balancer
+    totalBalanceNotional: BigDecimal! # underlying asset balance
+    totalVolumeUSD: BigDecimal! # amount of volume the token has moved on this day
+    totalVolumeNotional: BigDecimal! # underyling asset volume
+    totalSwapCount: BigInt!
 }
 
 type PoolSnapshot @entity {
-  id: ID!
-  pool: Pool!
-  amounts: [BigDecimal!]!
-  totalShares: BigDecimal!
-  swapVolume: BigDecimal!
-  swapFees: BigDecimal!
-  timestamp: Int!
+    id: ID!
+    pool: Pool!
+    amounts: [BigDecimal!]!
+    totalShares: BigDecimal!
+    swapVolume: BigDecimal!
+    swapFees: BigDecimal!
+    timestamp: Int!
 
-  totalSwapVolume: BigDecimal!
-  totalSwapFee: BigDecimal!
-  totalLiquidity: BigDecimal!
-  swapsCount: BigInt!
-  holdersCount: BigInt!
+    totalSwapVolume: BigDecimal!
+    totalSwapFee: BigDecimal!
+    totalLiquidity: BigDecimal!
+    swapsCount: BigInt!
+    holdersCount: BigInt!
 }
 
 type TradePair @entity {
-  " Token Address - Token Address "
-  id: ID!
-  token0: Token!
-  token1: Token!
-  totalSwapVolume: BigDecimal!
-  totalSwapFee: BigDecimal!
+    " Token Address - Token Address "
+    id: ID!
+    token0: Token!
+    token1: Token!
+    totalSwapVolume: BigDecimal!
+    totalSwapFee: BigDecimal!
 }
 
 type LatestPrice @entity {
-  id: ID!
-  asset: Bytes!
-  pricingAsset: Bytes! # address of stable asset
-  poolId: Pool! # last pool which set price
-  price: BigDecimal! # all the latest prices
-  priceUSD: BigDecimal!
-  block: BigInt! # last block that prices were updated
+    id: ID!
+    asset: Bytes!
+    pricingAsset: Bytes! # address of stable asset
+    poolId: Pool! # last pool which set price
+    price: BigDecimal! # all the latest prices
+    priceUSD: BigDecimal!
+    block: BigInt! # last block that prices were updated
 }
 
 type TokenPrice @entity {
-  id: ID! # address of token + address of stablecoin-poolId
-  poolId: Pool!
-  asset: Bytes!
-  amount: BigDecimal!
-  " Address of stable asset "
-  pricingAsset: Bytes!
-  price: BigDecimal!
-  priceUSD: BigDecimal!
-  block: BigInt!
-  timestamp: Int!
+    id: ID! # address of token + address of stablecoin-poolId
+    poolId: Pool!
+    asset: Bytes!
+    amount: BigDecimal!
+    " Address of stable asset "
+    pricingAsset: Bytes!
+    price: BigDecimal!
+    priceUSD: BigDecimal!
+    block: BigInt!
+    timestamp: Int!
 }
 
 enum InvestType {
-  Join
-  Exit
+    Join
+    Exit
 }
 
 type JoinExit @entity {
-  id: ID!
-  type: InvestType!
-  sender: Bytes!
-  amounts: [BigDecimal!]!
-  pool: Pool!
-  account: Account!
-  timestamp: Int!
-  tx: Bytes!
+    id: ID!
+    type: InvestType!
+    sender: Bytes!
+    amounts: [BigDecimal!]!
+    pool: Pool!
+    account: Account!
+    timestamp: Int!
+    tx: Bytes!
 }
 
 type Pool @entity {
-  id: ID!
-  address: Bytes!
-  poolType: String
-  factory: Bytes
-  strategyType: Int!
-  symbol: String
-  name: String
-  swapEnabled: Boolean!
-  swapFee: BigDecimal!
-  owner: Account
+    id: ID!
+    address: Bytes!
+    poolType: String
+    factory: Bytes
+    strategyType: Int!
+    symbol: String
+    name: String
+    swapEnabled: Boolean!
+    swapFee: BigDecimal!
+    owner: Account
 
-  totalWeight: BigDecimal
-  totalSwapVolume: BigDecimal!
-  totalSwapFee: BigDecimal!
-  totalLiquidity: BigDecimal!
-  totalShares: BigDecimal!
+    totalWeight: BigDecimal
+    totalSwapVolume: BigDecimal!
+    totalSwapFee: BigDecimal!
+    totalLiquidity: BigDecimal!
+    totalShares: BigDecimal!
 
-  totalSharesRaw: BigInt!
+    totalSharesRaw: BigInt!
 
-  createTime: Int!
-  swapsCount: BigInt!
-  holdersCount: BigInt!
+    createTime: Int!
+    swapsCount: BigInt!
+    holdersCount: BigInt!
 
-  vault: Koyo!
-  tx: Bytes
+    vault: Koyo!
+    tx: Bytes
 
-  tokensList: [Bytes!]!
+    tokensList: [Bytes!]!
 
-  # StablePool Only
-  amp: BigInt
+    # StablePool Only
+    amp: BigInt
 
-  tokens: [PoolToken!] @derivedFrom(field: "poolId")
-  swaps: [Swap!] @derivedFrom(field: "poolId")
-  shares: [PoolShare!] @derivedFrom(field: "poolId")
-  historicalValues: [PoolHistoricalLiquidity!] @derivedFrom(field: "poolId")
+    tokens: [PoolToken!] @derivedFrom(field: "poolId")
+    swaps: [Swap!] @derivedFrom(field: "poolId")
+    shares: [PoolShare!] @derivedFrom(field: "poolId")
+    historicalValues: [PoolHistoricalLiquidity!] @derivedFrom(field: "poolId")
 }
 
 type PoolHistoricalLiquidity @entity {
-  id: ID!
-  poolId: Pool!
-  poolTotalShares: BigDecimal!
-  poolLiquidity: BigDecimal! # total value, priced in the stable asset - ie USD
-  poolShareValue: BigDecimal!
-  pricingAsset: Bytes! # address of stable asset
-  block: BigInt!
+    id: ID!
+    poolId: Pool!
+    poolTotalShares: BigDecimal!
+    poolLiquidity: BigDecimal! # total value, priced in the stable asset - ie USD
+    poolShareValue: BigDecimal!
+    pricingAsset: Bytes! # address of stable asset
+    block: BigInt!
 }
 
 type PoolToken @entity {
-  id: ID!
-  poolId: Pool!
-  token: Token!
-  symbol: String!
-  name: String!
-  decimals: Int!
-  address: String!
-  priceRate: BigDecimal!
-  balance: BigDecimal!
-  balanceRaw: BigInt!
-  invested: BigDecimal!
+    id: ID!
+    poolId: Pool!
+    token: Token!
+    symbol: String!
+    name: String!
+    decimals: Int!
+    address: String!
+    priceRate: BigDecimal!
+    balance: BigDecimal!
+    balanceRaw: BigInt!
+    invested: BigDecimal!
 
-  # WeightedPool Only
-  weight: BigDecimal
+    # WeightedPool Only
+    weight: BigDecimal
 }
 
 type PoolShare @entity {
-  id: ID!
-  account: Account!
-  poolId: Pool!
-  balance: BigDecimal!
+    id: ID!
+    account: Account!
+    poolId: Pool!
+    balance: BigDecimal!
 }
 
 type AmpUpdate @entity {
-  id: ID!
-  poolId: Pool!
-  scheduledTimestamp: Int!
-  startTimestamp: BigInt!
-  endTimestamp: BigInt!
-  startAmp: BigInt!
-  endAmp: BigInt!
+    id: ID!
+    poolId: Pool!
+    scheduledTimestamp: Int!
+    startTimestamp: BigInt!
+    endTimestamp: BigInt!
+    startAmp: BigInt!
+    endAmp: BigInt!
 }
 
 type Swap @entity {
-  id: ID!
-  caller: Bytes!
-  tokenIn: Bytes!
-  tokenInSym: String!
-  tokenOut: Bytes!
-  tokenOutSym: String!
-  tokenAmountIn: BigDecimal!
-  tokenAmountOut: BigDecimal!
-  # valueUSD: BigDecimal!
-  poolId: Pool!
-  account: Account!
-  timestamp: Int!
-  tx: Bytes!
-  valueUSD: BigDecimal!
+    id: ID!
+    caller: Bytes!
+    tokenIn: Bytes!
+    tokenInSym: String!
+    tokenOut: Bytes!
+    tokenOutSym: String!
+    tokenAmountIn: BigDecimal!
+    tokenAmountOut: BigDecimal!
+    # valueUSD: BigDecimal!
+    poolId: Pool!
+    account: Account!
+    timestamp: Int!
+    tx: Bytes!
+    valueUSD: BigDecimal!
 }
 
 type Gauge @entity {
-  id: ID!
-  address: Bytes!
-  type: GaugeType!
-  killed: Boolean!
+    id: ID!
+    address: Bytes!
+    type: GaugeType!
+    killed: Boolean!
 
-  pool: Pool
+    pool: Pool
 
-  name: String!
-  symbol: String!
+    name: String!
+    symbol: String!
 
-  created: BigInt!
-  createdAtBlock: BigInt!
-  createdAtTransaction: Bytes!
+    created: BigInt!
+    createdAtBlock: BigInt!
+    createdAtTransaction: Bytes!
 
-  weights: [GaugeWeight!] @derivedFrom(field: "gauge")
+    weights: [GaugeWeight!] @derivedFrom(field: "gauge")
 
-  weightVotes: [GaugeWeightVote!] @derivedFrom(field: "gauge")
+    weightVotes: [GaugeWeightVote!] @derivedFrom(field: "gauge")
 }
 
 type GaugeWeight @entity {
-  id: ID!
-  gauge: Gauge!
-  time: BigInt!
-  weight: BigDecimal!
+    id: ID!
+    gauge: Gauge!
+    time: BigInt!
+    weight: BigDecimal!
 }
 
 type GaugeWeightVote @entity {
-  id: ID!
-  gauge: Gauge!
-  user: Account!
-  time: BigInt!
-  weight: BigDecimal!
+    id: ID!
+    gauge: Gauge!
+    user: Account!
+    time: BigInt!
+    weight: BigDecimal!
 }
 
 type GaugeType @entity {
-  id: ID!
-  name: String!
-  gaugeCount: BigInt!
-  gauges: [Gauge!] @derivedFrom(field: "type")
-  weights: [GaugeTypeWeight!] @derivedFrom(field: "type")
+    id: ID!
+    name: String!
+    gaugeCount: BigInt!
+    gauges: [Gauge!] @derivedFrom(field: "type")
+    weights: [GaugeTypeWeight!] @derivedFrom(field: "type")
 }
 
 type GaugeTypeWeight @entity {
-  id: ID!
-  type: GaugeType!
-  time: BigInt!
-  weight: BigDecimal!
+    id: ID!
+    type: GaugeType!
+    time: BigInt!
+    weight: BigDecimal!
 }
 
 type GaugeTotalWeight @entity {
-  id: ID!
-  time: BigInt!
-  weight: BigDecimal!
+    id: ID!
+    time: BigInt!
+    weight: BigDecimal!
 }
 
 type GaugeLiquidity @entity {
-  id: ID!
-  user: Account!
-  gauge: Gauge!
-  originalBalance: BigInt!
-  originalSupply: BigInt!
-  workingBalance: BigInt!
-  workingSupply: BigInt!
-  timestamp: BigInt!
-  block: BigInt!
-  transaction: Bytes!
+    id: ID!
+    user: Account!
+    gauge: Gauge!
+    originalBalance: BigInt!
+    originalSupply: BigInt!
+    workingBalance: BigInt!
+    workingSupply: BigInt!
+    timestamp: BigInt!
+    block: BigInt!
+    transaction: Bytes!
 }
 
 type GaugeDeposit @entity {
-  id: ID!
-  gauge: Gauge!
-  provider: Account!
-  value: BigDecimal!
+    id: ID!
+    gauge: Gauge!
+    provider: Account!
+    value: BigDecimal!
 }
 
 type GaugeWithdraw @entity {
-  id: ID!
-  gauge: Gauge!
-  provider: Account!
-  value: BigDecimal!
+    id: ID!
+    gauge: Gauge!
+    provider: Account!
+    value: BigDecimal!
 }

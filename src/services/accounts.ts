@@ -4,36 +4,36 @@ import { Account, AccountInternalBalance } from "../../generated/schema";
 import { ZERO_BD } from "../constants";
 
 export function getOrRegisterAccount(address: Bytes): Account {
-  let account = Account.load(address.toHexString());
+    let account = Account.load(address.toHexString());
 
-  if (account == null) {
-    account = new Account(address.toHexString());
-    account.address = address;
+    if (account == null) {
+        account = new Account(address.toHexString());
+        account.address = address;
 
-    account.save();
-  }
+        account.save();
+    }
 
-  return account;
+    return account;
 }
 
 export function getOrRegisterAccountInternalBalance(
-  account: string,
-  token: Address
+    account: string,
+    token: Address
 ): AccountInternalBalance {
-  const balanceId = account.concat(token.toHexString());
-  let accountInternalBalance = AccountInternalBalance.load(balanceId);
+    const balanceId = account.concat(token.toHexString());
+    let accountInternalBalance = AccountInternalBalance.load(balanceId);
 
-  if (accountInternalBalance == null) {
-    accountInternalBalance = new AccountInternalBalance(balanceId);
+    if (accountInternalBalance == null) {
+        accountInternalBalance = new AccountInternalBalance(balanceId);
 
-    accountInternalBalance.account = account;
-    accountInternalBalance.token = token;
+        accountInternalBalance.account = account;
+        accountInternalBalance.token = token;
 
-    accountInternalBalance.balance = ZERO_BD;
-    accountInternalBalance.balanceRaw = integer.ZERO;
+        accountInternalBalance.balance = ZERO_BD;
+        accountInternalBalance.balanceRaw = integer.ZERO;
 
-    accountInternalBalance.save();
-  }
+        accountInternalBalance.save();
+    }
 
-  return accountInternalBalance;
+    return accountInternalBalance;
 }

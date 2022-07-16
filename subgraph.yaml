@@ -17,9 +17,11 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/mappings/vault/core.ts
       entities:
+        - Koyo
         - Account
         - AccountInternalBalance
         - TokenSnapshot
+        - KoyoSnapshot
       abis:
         - name: Vault
           file: ./abis/Vault.abi
