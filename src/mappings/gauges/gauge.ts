@@ -45,6 +45,7 @@ export function handleUpdateLiquidityLimit(event: UpdateLiquidityLimit): void {
 
 export function handleDeposit(event: Deposit): void {
     const provider = getOrRegisterAccount(event.params.provider);
+    const gauge = Gauge.load(event.address.toHexString());
 
     const deposit = new GaugeDeposit(
         event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
@@ -53,10 +54,20 @@ export function handleDeposit(event: Deposit): void {
     deposit.provider = provider.id;
     deposit.value = decimal.fromBigInt(event.params.value);
     deposit.save();
+
+    if (gauge !== null) {
+        const gaugeContract = GaugeContract.bind(event.address);
+
+        const killedTried = gaugeContract.try_is_killed();
+        gauge.killed = killedTried.reverted ? gauge.killed : killedTried.value;
+
+        gauge.save();
+    }
 }
 
 export function handleWithdraw(event: Withdraw): void {
     const provider = getOrRegisterAccount(event.params.provider);
+    const gauge = Gauge.load(event.address.toHexString());
 
     const withdraw = new GaugeWithdraw(
         event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
@@ -65,4 +76,13 @@ export function handleWithdraw(event: Withdraw): void {
     withdraw.provider = provider.id;
     withdraw.value = decimal.fromBigInt(event.params.value);
     withdraw.save();
+
+    if (gauge !== null) {
+        const gaugeContract = GaugeContract.bind(event.address);
+
+        const killedTried = gaugeContract.try_is_killed();
+        gauge.killed = killedTried.reverted ? gauge.killed : killedTried.value;
+
+        gauge.save();
+    }
 }
