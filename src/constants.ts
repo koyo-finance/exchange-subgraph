@@ -129,5 +129,5 @@ export const USDC: Address = forNetwork(usdcAddressByNetwork, network);
 export const USDT: Address = forNetwork(usdtAddressByNetwork, network);
 
 export const PRICING_ASSETS: Address[] =
-    network === "boba" ? [WETH, USDC, FRAX, DAI, KYO] : [WETH, USDC, FRAX, DAI];
-export const USD_STABLE_ASSETS: Address[] = [FRAX, USDC, DAI];
+    network === "boba" ? [WETH, USDC, DAI, KYO] : [WETH, USDC, DAI];
+export const USD_STABLE_ASSETS: Address[] = [USDC, DAI];
