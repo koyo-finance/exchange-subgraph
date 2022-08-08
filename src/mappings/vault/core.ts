@@ -345,8 +345,7 @@ function handlePoolJoined(event: PoolBalanceChanged): void {
     join.account = liquidityProvider.id;
     join.timestamp = blockTimestamp;
     join.tx = transactionHash;
-
-    join.save();
+    join.valueUSD = ZERO_BD;
 
     for (let i: i32 = 0; i < tokenAddresses.length; i++) {
         let tokenAddress: Address = Address.fromString(
@@ -357,6 +356,8 @@ function handlePoolJoined(event: PoolBalanceChanged): void {
         let tokenAmountIn = tokenToDecimal(amounts[i], poolToken.decimals);
         let newAmount = poolToken.balance.plus(tokenAmountIn);
         let tokenAmountInUSD = valueInUSD(tokenAmountIn, tokenAddress);
+
+        join.valueUSD = join.valueUSD.plus(tokenAmountInUSD);
 
         let token = getOrRegisterToken(tokenAddress);
 
@@ -377,6 +378,8 @@ function handlePoolJoined(event: PoolBalanceChanged): void {
         poolToken.balance = newAmount;
         poolToken.save();
     }
+
+    join.save();
 
     for (let i: i32 = 0; i < tokenAddresses.length; i++) {
         let tokenAddress: Address = Address.fromString(
@@ -443,8 +446,7 @@ function handlePoolExited(event: PoolBalanceChanged): void {
     exit.account = liquidityProvider.id;
     exit.timestamp = blockTimestamp;
     exit.tx = transactionHash;
-
-    exit.save();
+    exit.valueUSD = ZERO_BD;
 
     for (let i: i32 = 0; i < tokenAddresses.length; i++) {
         let tokenAddress: Address = Address.fromString(
@@ -463,6 +465,8 @@ function handlePoolExited(event: PoolBalanceChanged): void {
         );
         let newAmount = poolToken.balance.minus(tokenAmountOut);
         let tokenAmountOutUSD = valueInUSD(tokenAmountOut, tokenAddress);
+
+        exit.valueUSD = exit.valueUSD.plus(tokenAmountOutUSD);
 
         poolToken.balance = newAmount;
         poolToken.save();
@@ -483,6 +487,8 @@ function handlePoolExited(event: PoolBalanceChanged): void {
 
         tokenSnapshot.save();
     }
+
+    exit.save();
 
     for (let i: i32 = 0; i < tokenAddresses.length; i++) {
         let tokenAddress: Address = Address.fromString(

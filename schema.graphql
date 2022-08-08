@@ -145,6 +145,7 @@ type JoinExit @entity {
     pool: Pool!
     account: Account!
     timestamp: Int!
+    valueUSD: BigDecimal!
     tx: Bytes!
 }
 
