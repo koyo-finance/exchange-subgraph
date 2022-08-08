@@ -97,7 +97,7 @@ const kyoAddressByNetwork: AddressByNetwork = {
 };
 
 const usdAddressByNetwork: AddressByNetwork = {
-    boba_mainnet: "0x7562F525106F5d54E891e005867Bf489B5988CD9", // FRAX
+    boba_mainnet: "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc", // USDC
     aurora_mainnet: "0xB12BFcA5A55806AaF64E99521918A4bf0fC40802", // USDC
     moonriver_mainnet: "0x1A93B23281CC1CDE4C4741353F3064709A16197d", // FRAX
     polygon_mainnet: "0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89", // FRAX
@@ -146,7 +146,7 @@ export const USDC: Address = forNetworkAddress(usdcAddressByNetwork, network);
 export const USDT: Address = forNetworkAddress(usdtAddressByNetwork, network);
 
 const pricingAssetsByNetwork: TokensByNetwork = {
-    boba_mainnet: [WETH, USDC, DAI, KYO],
+    boba_mainnet: [WETH, USDC, DAI, FRAX, USDT, KYO],
     aurora_mainnet: [WETH, USDC, DAI],
     moonriver_mainnet: [WETH, USDC, DAI],
     polygon_mainnet: [WETH, USDC, DAI],
@@ -154,7 +154,7 @@ const pricingAssetsByNetwork: TokensByNetwork = {
 };
 
 const usdStableAssetsByNetwork: TokensByNetwork = {
-    boba_mainnet: [USDC, DAI],
+    boba_mainnet: [USDC, DAI, FRAX, USDT],
     aurora_mainnet: [USDC, DAI],
     moonriver_mainnet: [USDC, DAI],
     polygon_mainnet: [USDC, DAI],
