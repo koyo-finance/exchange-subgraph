@@ -14,6 +14,14 @@ export class AddressByNetwork {
     public dev: string;
 }
 
+export class TokensByNetwork {
+    public boba_mainnet: Address[];
+    public aurora_mainnet: Address[];
+    public moonriver_mainnet: Address[];
+    public polygon_mainnet: Address[];
+    public dev: Address[];
+}
+
 const network: string = dataSource.network();
 
 export const DAY = 24 * 60 * 60;
@@ -38,21 +46,30 @@ export const ZERO_ADDRESS_ADDRESS: Address = changetype<Address>(
 
 export const BPT_DECIMALS = 18;
 
-function forNetwork(
+function forNetworkAddress(
     addressByNetwork: AddressByNetwork,
     network: string
 ): Address {
-    if (network == "boba") {
+    if (network == "boba")
         return Address.fromString(addressByNetwork.boba_mainnet);
-    } else if (network == "aurora") {
+    else if (network == "aurora")
         return Address.fromString(addressByNetwork.aurora_mainnet);
-    } else if (network == "moonriver") {
+    else if (network == "moonriver")
         return Address.fromString(addressByNetwork.moonriver_mainnet);
-    } else if (network == "matic") {
+    else if (network == "matic")
         return Address.fromString(addressByNetwork.polygon_mainnet);
-    } else {
-        return Address.fromString(addressByNetwork.dev);
-    }
+    else return Address.fromString(addressByNetwork.dev);
+}
+
+function forNetworkTokens(
+    tokensByNetwork: TokensByNetwork,
+    network: string
+): Address[] {
+    if (network == "boba") return tokensByNetwork.boba_mainnet;
+    else if (network == "aurora") return tokensByNetwork.aurora_mainnet;
+    else if (network == "moonriver") return tokensByNetwork.moonriver_mainnet;
+    else if (network == "matic") return tokensByNetwork.polygon_mainnet;
+    else return tokensByNetwork.dev;
 }
 
 const vaultAddressByNetwork: AddressByNetwork = {
@@ -119,15 +136,36 @@ const usdtAddressByNetwork: AddressByNetwork = {
     dev: "0x0000000000000000000000000000000000000000"
 };
 
-export const VAULT_ADDRESS = forNetwork(vaultAddressByNetwork, network);
-export const WETH: Address = forNetwork(wethAddressByNetwork, network);
-export const KYO: Address = forNetwork(kyoAddressByNetwork, network);
-export const USD: Address = forNetwork(usdAddressByNetwork, network);
-export const FRAX: Address = forNetwork(fraxAddressByNetwork, network);
-export const DAI: Address = forNetwork(daiAddressByNetwork, network);
-export const USDC: Address = forNetwork(usdcAddressByNetwork, network);
-export const USDT: Address = forNetwork(usdtAddressByNetwork, network);
+export const VAULT_ADDRESS = forNetworkAddress(vaultAddressByNetwork, network);
+export const WETH: Address = forNetworkAddress(wethAddressByNetwork, network);
+export const KYO: Address = forNetworkAddress(kyoAddressByNetwork, network);
+export const USD: Address = forNetworkAddress(usdAddressByNetwork, network);
+export const FRAX: Address = forNetworkAddress(fraxAddressByNetwork, network);
+export const DAI: Address = forNetworkAddress(daiAddressByNetwork, network);
+export const USDC: Address = forNetworkAddress(usdcAddressByNetwork, network);
+export const USDT: Address = forNetworkAddress(usdtAddressByNetwork, network);
 
-export const PRICING_ASSETS: Address[] =
-    network === "boba" ? [WETH, USDC, DAI, KYO] : [WETH, USDC, DAI];
-export const USD_STABLE_ASSETS: Address[] = [USDC, DAI];
+const pricingAssetsByNetwork: TokensByNetwork = {
+    boba_mainnet: [WETH, USDC, DAI, KYO],
+    aurora_mainnet: [WETH, USDC, DAI],
+    moonriver_mainnet: [WETH, USDC, DAI],
+    polygon_mainnet: [WETH, USDC, DAI],
+    dev: []
+};
+
+const usdStableAssetsByNetwork: TokensByNetwork = {
+    boba_mainnet: [USDC, DAI],
+    aurora_mainnet: [USDC, DAI],
+    moonriver_mainnet: [USDC, DAI],
+    polygon_mainnet: [USDC, DAI],
+    dev: []
+};
+
+export const PRICING_ASSETS: Address[] = forNetworkTokens(
+    pricingAssetsByNetwork,
+    network
+);
+export const USD_STABLE_ASSETS: Address[] = forNetworkTokens(
+    usdStableAssetsByNetwork,
+    network
+);
